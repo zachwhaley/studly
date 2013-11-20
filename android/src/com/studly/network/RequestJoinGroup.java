@@ -8,7 +8,7 @@ public class RequestJoinGroup extends RetrofitSpiceRequest<String, StudlyApi> {
     private StudlyEvent mEvent;
     private String mEmail;
     private boolean mJoin;
-    
+
     public RequestJoinGroup(StudlyEvent event, String email, boolean join) {
         super(String.class, StudlyApi.class);
         mEvent = event;

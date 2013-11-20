@@ -11,10 +11,10 @@ public interface StudlyApi {
 
     @GET("/todo")
     StudlyEvent.List getEvents();
-    
+
     @FormUrlEncoded
     @POST("/todo")
-    String joinGroup(@Field("event") String event, 
-                     @Field("email") String email, 
+    String joinGroup(@Field("event") String event,
+                     @Field("email") String email,
                      @Field("join") String join);
 }
