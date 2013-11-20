@@ -7,6 +7,7 @@ import com.studly.model.StudlyEvent;
 
 public class RequestStudlyEvents extends RetrofitSpiceRequest<StudlyEvent.List, StudlyApi> {
 
+    // TODO
 	static final StudlyEvent[] EVENTS = { 
 		new StudlyEvent("Foo"),
 		new StudlyEvent("Bar") 
@@ -18,6 +19,7 @@ public class RequestStudlyEvents extends RetrofitSpiceRequest<StudlyEvent.List, 
 
 	@Override
 	public StudlyEvent.List loadDataFromNetwork() throws Exception {
+	    //return getService().getEvents();
 		StudlyEvent.List events = new StudlyEvent.List();
 		events.addAll(Arrays.asList(EVENTS));
 		return events;
