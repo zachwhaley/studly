@@ -26,13 +26,12 @@ public class MainActivity extends ListActivity {
     private static final String TAG = "MainActivity";
 
     /* Attributes */
-    
+
     private SpiceManager mSpiceManager = new SpiceManager(StudlyService.class);
     private RequestStudlyEvents mRequestStudlyEvents;
-
-    /* Internal Classes */
     
-    private class StudlyAdapter extends ArrayAdapter<StudlyEvent> {
+    class StudlyAdapter extends ArrayAdapter<StudlyEvent> {
+
         public StudlyAdapter(Context context, StudlyEvent.List events) {
             super(context, 0, events);
         }
@@ -46,35 +45,45 @@ public class MainActivity extends ListActivity {
             StudlyEvent event = getItem(position);
             if (event != null) {
                 Log.d(TAG, "creating row for event " + event.getName());
-                
+
                 TextView textView = (TextView) view.findViewById(R.id.row_event);
                 textView.setText(event.getName());
-                
+
                 Button join = (Button) view.findViewById(R.id.button_join);
+                join.setText(event.isJoined() ? "Join" : "Leave");
                 join.setOnClickListener(new JoinClickListener(event));
             }
             return view;
         }
+        
     }
     
-    private class JoinClickListener implements OnClickListener {
+    class JoinClickListener implements OnClickListener {
+
         private StudlyEvent event;
+        
         public JoinClickListener(StudlyEvent event) {
             this.event = event;
         }
+
         @Override
         public void onClick(View v) {
-            Toast.makeText(MainActivity.this, "Join " + event.getName(), Toast.LENGTH_SHORT).show();
+            if (event.isJoined()) {
+                Toast.makeText(MainActivity.this, "Join " + event.getName(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "Leave " + event.getName(), Toast.LENGTH_SHORT).show();
+            }
             final String account = AccountUtils.getChosenAccountName(MainActivity.this);
             if (TextUtils.isEmpty(account)) {
                 // TODO set chosen account
             }
             //mSpiceManager.execute(request, requestListener);
         }
+        
     }
-    
+
     /* Methods */
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,5 +108,5 @@ public class MainActivity extends ListActivity {
         mSpiceManager.shouldStop();
         super.onStop();
     }
-    
+
 }
