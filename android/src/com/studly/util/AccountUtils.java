@@ -11,14 +11,14 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 public final class AccountUtils {
-    
+
     private static final String TAG = "AccountUtils";
     private static final String PREF_CHOSEN_ACCOUNT = "chosen_account";
     private static final String GOOGLE_ACCOUNT_TYPE = "com.google";
-    
+
     private AccountUtils() {
     }
-    
+
     public static List<Account> getAccounts(final Context context) {
         AccountManager accountManager = AccountManager.get(context);
         return Arrays.asList(accountManager.getAccountsByType(GOOGLE_ACCOUNT_TYPE));
@@ -28,7 +28,7 @@ public final class AccountUtils {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         return sp.getString(PREF_CHOSEN_ACCOUNT, null);
     }
-    
+
     static void setChosenAccountName(final Context context, final String accountName) {
         Log.d(TAG, "Chose account " + accountName);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);

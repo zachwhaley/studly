@@ -8,21 +8,21 @@ import com.studly.model.StudlyEvent;
 public class RequestStudlyEvents extends RetrofitSpiceRequest<StudlyEvent.List, StudlyApi> {
 
     // TODO
-	static final StudlyEvent[] EVENTS = { 
-		new StudlyEvent("Foo"),
-		new StudlyEvent("Bar") 
-	};
+    static final StudlyEvent[] EVENTS = {
+        new StudlyEvent("Foo"),
+        new StudlyEvent("Bar")
+    };
 
-	public RequestStudlyEvents() {
-		super(StudlyEvent.List.class, StudlyApi.class);
-	}
+    public RequestStudlyEvents() {
+        super(StudlyEvent.List.class, StudlyApi.class);
+    }
 
-	@Override
-	public StudlyEvent.List loadDataFromNetwork() throws Exception {
-	    //return getService().getEvents();
-		StudlyEvent.List events = new StudlyEvent.List();
-		events.addAll(Arrays.asList(EVENTS));
-		return events;
-	}
+    @Override
+    public StudlyEvent.List loadDataFromNetwork() throws Exception {
+        //return getService().getEvents();
+        StudlyEvent.List events = new StudlyEvent.List();
+        events.addAll(Arrays.asList(EVENTS));
+        return events;
+    }
 
 }

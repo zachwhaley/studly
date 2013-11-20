@@ -29,7 +29,7 @@ public class MainActivity extends ListActivity {
 
     private SpiceManager mSpiceManager = new SpiceManager(StudlyService.class);
     private RequestStudlyEvents mRequestStudlyEvents;
-    
+
     class StudlyAdapter extends ArrayAdapter<StudlyEvent> {
 
         public StudlyAdapter(Context context, StudlyEvent.List events) {
@@ -55,13 +55,13 @@ public class MainActivity extends ListActivity {
             }
             return view;
         }
-        
+
     }
-    
+
     class JoinClickListener implements OnClickListener {
 
         private StudlyEvent event;
-        
+
         public JoinClickListener(StudlyEvent event) {
             this.event = event;
         }
@@ -79,7 +79,7 @@ public class MainActivity extends ListActivity {
             }
             //mSpiceManager.execute(request, requestListener);
         }
-        
+
     }
 
     /* Methods */
