@@ -8,13 +8,15 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 public final class AccountUtils {
 
     private static final String TAG = "AccountUtils";
     private static final String PREF_CHOSEN_ACCOUNT = "chosen_account";
-    private static final String GOOGLE_ACCOUNT_TYPE = "com.google";
+
+    public static final String GOOGLE_ACCOUNT_TYPE = "com.google";
 
     private AccountUtils() {
     }
@@ -28,8 +30,12 @@ public final class AccountUtils {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         return sp.getString(PREF_CHOSEN_ACCOUNT, null);
     }
+    
+    public static boolean isAuthenticated(final Context context) {
+        return !TextUtils.isEmpty(getChosenAccountName(context));
+    }
 
-    static void setChosenAccountName(final Context context, final String accountName) {
+    public static void setChosenAccountName(final Context context, final String accountName) {
         Log.d(TAG, "Chose account " + accountName);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         sp.edit().putString(PREF_CHOSEN_ACCOUNT, accountName).commit();
