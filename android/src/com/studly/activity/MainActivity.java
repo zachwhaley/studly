@@ -1,9 +1,9 @@
 package com.studly.activity;
 
+import android.accounts.Account;
 import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,17 +16,22 @@ import android.widget.Toast;
 
 import com.octo.android.robospice.SpiceManager;
 import com.studly.R;
+import com.studly.fragment.ChooseAccountFragment;
+import com.studly.fragment.ChooseAccountFragment.ChooseAccountListener;
 import com.studly.model.StudlyEvent;
 import com.studly.network.RequestStudlyEvents;
 import com.studly.service.StudlyService;
 import com.studly.util.AccountUtils;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends ListActivity implements ChooseAccountListener {
 
     private static final String TAG = "MainActivity";
+    private static final String CHOOSE_ACCOUNT_TAG = "account_chooser";
+    private static final String KEY_CHOSEN_ACCOUNT = "chosen_account";
 
     /* Attributes */
 
+    private String mAccountName;
     private SpiceManager mSpiceManager = new SpiceManager(StudlyService.class);
     private RequestStudlyEvents mRequestStudlyEvents;
 
@@ -73,11 +78,7 @@ public class MainActivity extends ListActivity {
             } else {
                 Toast.makeText(MainActivity.this, "Leave " + event.getName(), Toast.LENGTH_SHORT).show();
             }
-            final String account = AccountUtils.getChosenAccountName(MainActivity.this);
-            if (TextUtils.isEmpty(account)) {
-                // TODO set chosen account
-            }
-            //mSpiceManager.execute(request, requestListener);
+            // mSpiceManager.execute(request, requestListener);
         }
 
     }
@@ -87,10 +88,21 @@ public class MainActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!AccountUtils.isAuthenticated(this)) {
+            ChooseAccountFragment.newInstance(this).show(getFragmentManager(), CHOOSE_ACCOUNT_TAG);
+        }
+        
+        if (savedInstanceState != null) {
+            mAccountName = savedInstanceState.getString(KEY_CHOSEN_ACCOUNT);
+        } else {
+            mAccountName = AccountUtils.getChosenAccountName(this);
+        }
+
         mRequestStudlyEvents = new RequestStudlyEvents();
         try {
             Log.d(TAG, "Setting list adapter");
-            //mSpiceManager.execute(mRequestStudlyEvents, requestListener);
+            // mSpiceManager.execute(mRequestStudlyEvents, requestListener);
             setListAdapter(new StudlyAdapter(this, mRequestStudlyEvents.loadDataFromNetwork()));
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,6 +119,19 @@ public class MainActivity extends ListActivity {
     protected void onStop() {
         mSpiceManager.shouldStop();
         super.onStop();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mAccountName != null) {
+            outState.putString(KEY_CHOSEN_ACCOUNT, mAccountName);
+        }
+        super.onSaveInstanceState(outState);
+    }
+    
+    @Override
+    public void onAccountChosen(Account account) {
+        AccountUtils.setChosenAccountName(this, account.name);
     }
 
 }
