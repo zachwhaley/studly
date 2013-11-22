@@ -16,7 +16,7 @@ import com.studly.util.AccountUtils;
 public class ChooseAccountFragment extends DialogFragment {
 
     public interface ChooseAccountListener {
-        public void onAccountChosen(final Account account);
+        void onAccountChosen(final Account account);
     }
 
     private ChooseAccountListener mListener;
@@ -45,7 +45,7 @@ public class ChooseAccountFragment extends DialogFragment {
         for (Account account : mAccounts) {
             emails.add(account.name);
         }
-        builder.setItems(emails.toArray(new String[emails.size()]), new DialogInterface.OnClickListener() {
+        builder.setItems(emails.toArray(new String[0]), new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {

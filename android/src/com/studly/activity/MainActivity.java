@@ -6,6 +6,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -18,15 +20,18 @@ import com.octo.android.robospice.SpiceManager;
 import com.studly.R;
 import com.studly.fragment.ChooseAccountFragment;
 import com.studly.fragment.ChooseAccountFragment.ChooseAccountListener;
+import com.studly.fragment.ChooseGroupFragment;
+import com.studly.fragment.ChooseGroupFragment.ChooseGroupListener;
 import com.studly.model.StudlyEvent;
 import com.studly.network.RequestStudlyEvents;
 import com.studly.service.StudlyService;
 import com.studly.util.AccountUtils;
 
-public class MainActivity extends ListActivity implements ChooseAccountListener {
+public class MainActivity extends ListActivity implements ChooseAccountListener, ChooseGroupListener {
 
     private static final String TAG = "MainActivity";
     private static final String CHOOSE_ACCOUNT_TAG = "account_chooser";
+    private static final String CHOOSE_EVENT_TAG = "event_chooser";
     private static final String KEY_CHOSEN_ACCOUNT = "chosen_account";
 
     /* Attributes */
@@ -92,7 +97,7 @@ public class MainActivity extends ListActivity implements ChooseAccountListener 
         if (!AccountUtils.isAuthenticated(this)) {
             ChooseAccountFragment.newInstance(this).show(getFragmentManager(), CHOOSE_ACCOUNT_TAG);
         }
-        
+
         if (savedInstanceState != null) {
             mAccountName = savedInstanceState.getString(KEY_CHOSEN_ACCOUNT);
         } else {
@@ -106,6 +111,23 @@ public class MainActivity extends ListActivity implements ChooseAccountListener 
             setListAdapter(new StudlyAdapter(this, mRequestStudlyEvents.loadDataFromNetwork()));
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.action_new_event:
+            ChooseGroupFragment.newInstance(this).show(getFragmentManager(), CHOOSE_EVENT_TAG);
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -128,10 +150,15 @@ public class MainActivity extends ListActivity implements ChooseAccountListener 
         }
         super.onSaveInstanceState(outState);
     }
-    
+
     @Override
     public void onAccountChosen(Account account) {
         AccountUtils.setChosenAccountName(this, account.name);
+    }
+
+    @Override
+    public void onGroupChosen(long calId) {
+        Toast.makeText(this, "Event title " + calId, Toast.LENGTH_SHORT).show();
     }
 
 }
