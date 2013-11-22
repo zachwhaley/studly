@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Studly</string>
-    <string name="action_new_event">New Event</string>
+    <string name="action_new_group">New Group</string>
     <string name="join">Join</string>
     <string name="choose_account_text">Choose Default Account</string>
     <string name="choose_group_text">Choose Group</string>
