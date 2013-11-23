@@ -17,13 +17,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.octo.android.robospice.SpiceManager;
+import com.octo.android.robospice.persistence.exception.SpiceException;
+import com.octo.android.robospice.request.listener.RequestListener;
 import com.studly.R;
 import com.studly.fragment.ChooseAccountFragment;
 import com.studly.fragment.ChooseAccountFragment.ChooseAccountListener;
 import com.studly.fragment.ChooseGroupFragment;
 import com.studly.fragment.ChooseGroupFragment.ChooseGroupListener;
-import com.studly.model.StudlyEvent;
-import com.studly.network.RequestStudlyEvents;
+import com.studly.model.StudlyGroup;
+import com.studly.network.RequestStudlyGroups;
 import com.studly.service.StudlyService;
 import com.studly.util.AccountUtils;
 
@@ -36,63 +38,15 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
 
     /* Attributes */
 
-    private String mAccountName;
     private SpiceManager mSpiceManager = new SpiceManager(StudlyService.class);
-    private RequestStudlyEvents mRequestStudlyEvents;
-
-    class StudlyAdapter extends ArrayAdapter<StudlyEvent> {
-
-        public StudlyAdapter(Context context, StudlyEvent.List events) {
-            super(context, 0, events);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            Log.d(TAG, "Create new view");
-            LayoutInflater inflater = getLayoutInflater();
-            View view = inflater.inflate(R.layout.studly_list_item, null);
-
-            StudlyEvent event = getItem(position);
-            if (event != null) {
-                Log.d(TAG, "creating row for event " + event.getName());
-
-                TextView textView = (TextView) view.findViewById(R.id.row_event);
-                textView.setText(event.getName());
-
-                Button join = (Button) view.findViewById(R.id.button_join);
-                join.setText(event.isJoined() ? "Join" : "Leave");
-                join.setOnClickListener(new JoinClickListener(event));
-            }
-            return view;
-        }
-
-    }
-
-    class JoinClickListener implements OnClickListener {
-
-        private StudlyEvent event;
-
-        public JoinClickListener(StudlyEvent event) {
-            this.event = event;
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (event.isJoined()) {
-                Toast.makeText(MainActivity.this, "Joining " + event.getName(), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(MainActivity.this, "Leaving " + event.getName(), Toast.LENGTH_SHORT).show();
-            }
-            // mSpiceManager.execute(request, requestListener);
-            performRequest();
-        }
-
-    }
+    private String mAccountName;
+    private RequestStudlyGroups mRequestStudlyGroups;
+    private StudlyAdapter mStudlyAdapter;
 
     /* Methods */
 
     private void performRequest() {
-        // mSpiceManager.execute(mRequestStudlyEvents, requestListener);
+        mSpiceManager.execute(mRequestStudlyGroups, new StudlyGroupRequestListener());
     }
 
     @Override
@@ -109,11 +63,11 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
             mAccountName = AccountUtils.getChosenAccountName(this);
         }
 
-        mRequestStudlyEvents = new RequestStudlyEvents();
+        mRequestStudlyGroups = new RequestStudlyGroups();
         try {
             Log.d(TAG, "Setting list adapter");
             performRequest();
-            setListAdapter(new StudlyAdapter(this, mRequestStudlyEvents.loadDataFromNetwork()));
+            setListAdapter(mStudlyAdapter);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -164,6 +118,71 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
     @Override
     public void onGroupChosen(long calId) {
         Toast.makeText(this, "Event title " + calId, Toast.LENGTH_SHORT).show();
+    }
+    
+    /* Classes */
+
+    private class StudlyAdapter extends ArrayAdapter<StudlyGroup> {
+
+        public StudlyAdapter(Context context, StudlyGroup.List events) {
+            super(context, 0, events);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Log.d(TAG, "Create new view");
+            LayoutInflater inflater = getLayoutInflater();
+            View view = inflater.inflate(R.layout.studly_list_item, null);
+
+            StudlyGroup group = getItem(position);
+            if (group != null) {
+                Log.d(TAG, "creating row for event " + group.getName());
+
+                TextView textView = (TextView) view.findViewById(R.id.row_event);
+                textView.setText(group.getName());
+
+                Button join = (Button) view.findViewById(R.id.button_join);
+                join.setText(group.isJoined() ? "Join" : "Leave");
+                join.setOnClickListener(new JoinClickListener(group));
+            }
+            return view;
+        }
+
+    }
+
+    private class JoinClickListener implements OnClickListener {
+
+        private StudlyGroup group;
+
+        public JoinClickListener(StudlyGroup event) {
+            this.group = event;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (group.isJoined()) {
+                Toast.makeText(MainActivity.this, "Joining " + group.getName(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "Leaving " + group.getName(), Toast.LENGTH_SHORT).show();
+            }
+            // mSpiceManager.execute(request, requestListener);
+            performRequest();
+        }
+
+    }
+
+    private class StudlyGroupRequestListener implements RequestListener<StudlyGroup.List> {
+
+        @Override
+        public void onRequestFailure(SpiceException spiceException) {
+        }
+
+        @Override
+        public void onRequestSuccess(StudlyGroup.List groups) {
+            mStudlyAdapter = new StudlyAdapter(MainActivity.this, groups);
+            MainActivity.this.setListAdapter(mStudlyAdapter);
+        }
+
     }
 
 }
