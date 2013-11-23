@@ -1,7 +1,6 @@
 package com.studly.fragment;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
