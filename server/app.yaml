@@ -8,14 +8,9 @@ handlers:
 - url: /.*
   script: studly.app
 
-- url: /android
-  static_dir: android
-
 - url: /calsync
   static_dir: calsync
 
 libraries:
 - name: webapp2
   version: latest
-
-
