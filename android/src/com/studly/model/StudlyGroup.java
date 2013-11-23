@@ -6,14 +6,14 @@ import java.util.ArrayList;
 public class StudlyGroup {
 
     private String name;
-    private String joined;
+    private boolean joined;
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public boolean isJoined() {
-        return Boolean.getBoolean(joined);
+        return this.joined;
     }
 
     public static class List extends ArrayList<StudlyGroup> {
