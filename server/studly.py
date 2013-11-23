@@ -10,8 +10,8 @@ class MainPage(webapp2.RequestHandler):
 class GetGroups(webapp2.RequestHandler):
     def get(self):
         events = [
-            {"name": "foo", "joined": "true"},
-            {"name": "bar", "joined": "false"}
+            {"name": "foo", "joined": True},
+            {"name": "bar", "joined": False}
         ]
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(events))
