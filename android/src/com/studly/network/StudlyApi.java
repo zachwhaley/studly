@@ -5,12 +5,12 @@ import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.POST;
 
-import com.studly.model.StudlyEvent;
+import com.studly.model.StudlyGroup;
 
 public interface StudlyApi {
 
-    @GET("/todo")
-    StudlyEvent.List getEvents();
+    @GET("/groups")
+    StudlyGroup.List getGroups();
 
     @FormUrlEncoded
     @POST("/todo")
