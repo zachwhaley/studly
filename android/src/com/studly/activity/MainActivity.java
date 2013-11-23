@@ -79,16 +79,21 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
         @Override
         public void onClick(View v) {
             if (event.isJoined()) {
-                Toast.makeText(MainActivity.this, "Join " + event.getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Joining " + event.getName(), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(MainActivity.this, "Leave " + event.getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Leaving " + event.getName(), Toast.LENGTH_SHORT).show();
             }
             // mSpiceManager.execute(request, requestListener);
+            performRequest();
         }
 
     }
 
     /* Methods */
+
+    private void performRequest() {
+        // mSpiceManager.execute(mRequestStudlyEvents, requestListener);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +112,7 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
         mRequestStudlyEvents = new RequestStudlyEvents();
         try {
             Log.d(TAG, "Setting list adapter");
-            // mSpiceManager.execute(mRequestStudlyEvents, requestListener);
+            performRequest();
             setListAdapter(new StudlyAdapter(this, mRequestStudlyEvents.loadDataFromNetwork()));
         } catch (Exception e) {
             e.printStackTrace();
