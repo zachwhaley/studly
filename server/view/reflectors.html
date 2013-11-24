@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Studly</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
+    </script>
+    <script>
+    $(document).ready(function() {
+        $.getJSON("groups.json", function(groups) {
+            $.each(groups, function(i, v) {
+                $("#tbl").find('tbody')
+                    .append($('<tr>')
+                        .append($('<td>')
+                            .text(v.name)
+                        )
+                    );
+            });
+        });
+    });
+    </script>
+</head>
+
+<body>
+    <h1 id="h">Studly</h1>
+    <table id="tbl">
+        <th>Reflectors</th>
+    </table>
+</body>
+</html>
