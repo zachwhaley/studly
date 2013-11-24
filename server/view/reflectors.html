@@ -6,24 +6,38 @@
     </script>
     <script>
     $(document).ready(function() {
-        $.getJSON("groups.json", function(groups) {
-            $.each(groups, function(i, v) {
-                $("#tbl").find('tbody')
-                    .append($('<tr>')
-                        .append($('<td>')
-                            .text(v.name)
+        var groups = [{name: "foo@bar"}, {name: "bar@foo"}]
+        $.each(groups, function(i, v) {
+            $("#tbl").find('tbody')
+                .append($('<tr>')
+                    .append($('<td>')
+                        .text(v.name)
+                    )
+                    .append($('<td>')
+                        .append($('<input>')
+                            .attr("type", "button")
+                            .attr("value", "Remove")
+                            .attr("name", v.name)
+                            .click(function() {
+                                alert("Remove " + v.name + "?")
+                            })
                         )
-                    );
-            });
+                    )
+                );
         });
     });
     </script>
 </head>
 
 <body>
-    <h1 id="h">Studly</h1>
+    <h1>Studly</h1>
     <table id="tbl">
         <th>Reflectors</th>
     </table>
+    <p>
+    <form>
+        <input>
+        <input type="submit" value="Add email">
+    </form>
 </body>
 </html>
