@@ -9,20 +9,21 @@ import calendarAuthenticate
 from dateutil import parser
 
 def getReflectorList(reflectorList, displayWarning = False):
-    reflectorList = "/var/lib/majordomo/lists/" + reflectorList
-    try: 
-        refList = open(reflectorList , 'r' )
-    except:
-      if displayWarning == True:
-        print "WARNING: Reflector List not found: " + reflectorList
-        exit(1)
-    emails = []
-    while True:
-        oneLine = refList.readline()
-        if not oneLine:
-            break
-        if len(oneLine) > 4:
-            emails.append(str.strip(oneLine.lower()))
+#     reflectorList = "/var/lib/majordomo/lists/" + reflectorList
+#     try: 
+#         refList = open(reflectorList , 'r' )
+#     except:
+#       if displayWarning == True:
+#         print "WARNING: Reflector List not found: " + reflectorList
+#         exit(1)
+#     emails = []
+#     while True:
+#         oneLine = refList.readline()
+#         if not oneLine:
+#             break
+#         if len(oneLine) > 4:
+#             emails.append(str.strip(oneLine.lower()))
+    emails = ["trevor.latson@gmail.com", "zachbwhaley@gmail.com"]
     return emails
 
 def getCalendarList(calendarId):
