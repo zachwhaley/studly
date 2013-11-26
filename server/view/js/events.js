@@ -4,7 +4,6 @@ $(document).ready(function() {
         {name: "bar", list: ["foo", "gii"]}
     ];
     var evts = $("#evts");
-    $(evts).accordion();
     $.each(events, function(i, v) {
         $(evts).append($('<h3>').text(v.name));
 
@@ -52,4 +51,5 @@ $(document).ready(function() {
             })
         );
     });
+    $("#evts").accordion();
 });

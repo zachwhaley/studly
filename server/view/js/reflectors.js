@@ -4,7 +4,6 @@ $(document).ready(function() {
         {name: "bar", list: ["foo@bar", "gii@bar"]}
     ];
     var refs = $("#refs");
-    $(refs).accordion();
     $.each(groups, function(i, v) {
         $(refs).append($('<h3>').text(v.name));
 
@@ -39,4 +38,5 @@ $(document).ready(function() {
             .attr("value", "Add email")
         );
     });
+    $("#refs").accordion();
 });
