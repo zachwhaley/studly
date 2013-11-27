@@ -1,5 +1,6 @@
 import json
 import webapp2
+import datetime
 
 from google.appengine.ext import ndb
 
@@ -37,7 +38,7 @@ class GetCalendarList(webapp2.RequestHandler):
                             }
                           ],
                           "primary": True
-                          }, 
+                          },
                          {
                           "kind": "calendar#calendarListEntry",
                           "etag": "etag string",
@@ -66,7 +67,111 @@ class GetCalendarList(webapp2.RequestHandler):
 class GetEvents(webapp2.RequestHandler):
     def get(self):          
         self.response.headers['Content-Type'] = 'application/json'
-        self.response.out.write(json.dumps(["foo", "bar"]))
+        events = [{
+                  "kind": "calendar#event",
+                  "etag": "etag",
+                  "id": "string",
+                  "status": "string",
+                  "htmlLink": "string",
+                  "created": datetime,
+                  "updated": datetime,
+                  "summary": "string",
+                  "description": "string",
+                  "location": "string",
+                  "colorId": "string",
+                  "creator": {
+                    "id": "string",
+                    "email": "string",
+                    "displayName": "string",
+                    "self": True
+                  },
+                  "organizer": {
+                    "id": "string",
+                    "email": "string",
+                    "displayName": "string",
+                    "self": True
+                  },
+                  "start": {
+                    "date": datetime.date,
+                    "dateTime": datetime,
+                    "timeZone": "string"
+                  },
+                  "end": {
+                    "date": datetime.date,
+                    "dateTime": datetime,
+                    "timeZone": "string"
+                  },
+                  "endTimeUnspecified": True,
+                  "recurrence": [
+                    "string"
+                  ],
+                  "recurringEventId": "string",
+                  "originalStartTime": {
+                    "date": datetime.date,
+                    "dateTime": datetime,
+                    "timeZone": "string"
+                  },
+                  "transparency": "string",
+                  "visibility": "string",
+                  "iCalUID": "string",
+                  "sequence": 2,
+                  "attendees": [
+                    {
+                      "id": "string",
+                      "email": "string",
+                      "displayName": "string",
+                      "organizer": True,
+                      "self": True,
+                      "resource": True,
+                      "optional": True,
+                      "responseStatus": "string",
+                      "comment": "string",
+                      "additionalGuests": 2
+                    }
+                  ],
+                  "attendeesOmitted": True,
+                  "extendedProperties": {
+                    "private": {
+                      "(key)": "string"
+                    },
+                    "shared": {
+                      "(key)": "string"
+                    }
+                  },
+                  "hangoutLink": "string",
+                  "gadget": {
+                    "type": "string",
+                    "title": "string",
+                    "link": "string",
+                    "iconLink": "string",
+                    "width": 2,
+                    "height": 2,
+                    "display": "string",
+                    "preferences": {
+                      "(key)": "string"
+                    }
+                  },
+                  "anyoneCanAddSelf": True,
+                  "guestsCanInviteOthers": True,
+                  "guestsCanModify": True,
+                  "guestsCanSeeOtherGuests": True,
+                  "privateCopy": True,
+                  "locked": True,
+                  "reminders": {
+                    "useDefault": True,
+                    "overrides": [
+                      {
+                        "method": "string",
+                        "minutes": 2
+                      }
+                    ]
+                  },
+                  "source": {
+                    "url": "string",
+                    "title": "string"
+                  }
+                }]
+        self.response.out.write(json.dumps(events))
         
 class GetSingleEvents(webapp2.RequestHandler):
     def get(self):          
