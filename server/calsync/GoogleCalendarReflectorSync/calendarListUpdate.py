@@ -233,7 +233,7 @@ def updateCalendarList(calendarId, TimezoneOffset, debug = True):
                                except KeyboardInterrupt:
                                    print 'Update canceled. Moving to next event.'
                                    return False
-                               returnTrue
+                               return True
 
         
 if __name__ == '__main__':
