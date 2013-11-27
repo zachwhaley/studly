@@ -125,7 +125,9 @@ def updateEvent(event, calendarId, reflectorList, debug = False):
                 service.events().update(calendarId=calendarId, eventId=event['id'], body=event, sendNotifications = True).execute()
             except: 
                 print "WARNING: Calendar Usage Limits Exceeded."
+                return False
             time.sleep(10)
+            return True
 
 
 def updateCalendarList(calendarId, TimezoneOffset, debug = True):
@@ -230,6 +232,8 @@ def updateCalendarList(calendarId, TimezoneOffset, debug = True):
                                    updateEvent( event, calendarId, listFile, debug )
                                except KeyboardInterrupt:
                                    print 'Update canceled. Moving to next event.'
+                                   return False
+                               returnTrue
 
         
 if __name__ == '__main__':
