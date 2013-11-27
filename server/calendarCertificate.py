@@ -51,7 +51,8 @@ def getCertificate():
 
     # Refresh the access token if it has expired
     if credentials.access_token_expired == True:
-      credentials.refresh(http)
+      credentials.refresh(http)  
+    return http
 
 if __name__ == '__main__':
     getCertificate()

@@ -21,16 +21,8 @@ FLAGS.auth_local_webserver = False
 def getService(calendarId):
 
     # Map calendarId to the certificate file location
-    credentialDict = {"nenglish@si2.org":   "calendar_nick.dat",
-                      "knesmith@si2.org":   "calendar_kevin.dat",
-                      "john.ellis@si2.org": "calendar_john.dat",
-                      "jakeb@si2.org":      "calendar_jake.dat",
-                      "steve@si2.org":      "calendar_steve.dat",
-                      "pfeil@si2.org":      "calendar_barbara_p.dat",
-                      "barbarar@si2.org":   "calendar_barbara_r.dat",
-                      "parks@si2.org":      "calendar_joanne.dat",
-                      "scarver@si2.org":    "calendar_susan.dat",
-                      "trevor@si2.org":     "calendar_trevor.dat" }
+    credentialDict = {"trevor.latson@gmail.com":    "calendar_trevor.dat",
+                      "zachbwhaley@gmail.com":     "calendar_zach.dat" }
 
     if calendarId not in credentialDict:
         print "WARNING: Could not find credentials file for: ", calendarId
