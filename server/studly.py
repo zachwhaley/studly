@@ -1,6 +1,5 @@
 import json
 import webapp2
-import datetime
 
 from google.appengine.ext import ndb
 
@@ -9,12 +8,12 @@ class MainPage(webapp2.RequestHandler):
         self.response.out.write("Studly")
 
 class GetReflectorList(webapp2.RequestHandler):
-    def get(self):          
+    def get(self):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(["emailaddress1@foo.com", "emailaddress2@foo.com"]))
-        
+
 class GetCalendarList(webapp2.RequestHandler):
-    def get(self):          
+    def get(self):
         self.response.headers['Content-Type'] = 'application/json'
         calendar_list = [{
                           "kind": "calendar#calendarListEntry",
@@ -63,9 +62,9 @@ class GetCalendarList(webapp2.RequestHandler):
                           "primary": False
 }]
         self.response.out.write(json.dumps(calendar_list))
-        
+
 class GetEvents(webapp2.RequestHandler):
-    def get(self):          
+    def get(self):
         self.response.headers['Content-Type'] = 'application/json'
         events = [{
                   "kind": "calendar#event",
@@ -73,8 +72,8 @@ class GetEvents(webapp2.RequestHandler):
                   "id": "string",
                   "status": "string",
                   "htmlLink": "string",
-                  "created": datetime,
-                  "updated": datetime,
+                  "created": "today",
+                  "updated": "today",
                   "summary": "string",
                   "description": "string",
                   "location": "string",
@@ -92,13 +91,13 @@ class GetEvents(webapp2.RequestHandler):
                     "self": True
                   },
                   "start": {
-                    "date": datetime.date,
-                    "dateTime": datetime,
+                    "date": "today",
+                    "dateTime": "today",
                     "timeZone": "string"
                   },
                   "end": {
-                    "date": datetime.date,
-                    "dateTime": datetime,
+                    "date": "today",
+                    "dateTime": "today",
                     "timeZone": "string"
                   },
                   "endTimeUnspecified": True,
@@ -107,8 +106,8 @@ class GetEvents(webapp2.RequestHandler):
                   ],
                   "recurringEventId": "string",
                   "originalStartTime": {
-                    "date": datetime.date,
-                    "dateTime": datetime,
+                    "date": "today",
+                    "dateTime": "today",
                     "timeZone": "string"
                   },
                   "transparency": "string",
@@ -172,9 +171,9 @@ class GetEvents(webapp2.RequestHandler):
                   }
                 }]
         self.response.out.write(json.dumps(events))
-        
-class GetSingleEvents(webapp2.RequestHandler):
-    def get(self):          
+
+class GetSingleEvent(webapp2.RequestHandler):
+    def get(self):
         self.response.headers['Content-Type'] = 'application/json'
         events = [{
                   "kind": "calendar#event",
@@ -182,8 +181,8 @@ class GetSingleEvents(webapp2.RequestHandler):
                   "id": "string",
                   "status": "string",
                   "htmlLink": "string",
-                  "created": datetime,
-                  "updated": datetime,
+                  "created": "today",
+                  "updated": "today",
                   "summary": "string",
                   "description": "string",
                   "location": "string",
@@ -201,13 +200,13 @@ class GetSingleEvents(webapp2.RequestHandler):
                     "self": True
                   },
                   "start": {
-                    "date": datetime.date,
-                    "dateTime": datetime,
+                    "date": "today",
+                    "dateTime": "today",
                     "timeZone": "string"
                   },
                   "end": {
-                    "date": datetime.date,
-                    "dateTime": datetime,
+                    "date": "today",
+                    "dateTime": "today",
                     "timeZone": "string"
                   },
                   "endTimeUnspecified": True,
@@ -216,8 +215,8 @@ class GetSingleEvents(webapp2.RequestHandler):
                   ],
                   "recurringEventId": "string",
                   "originalStartTime": {
-                    "date": datetime.date,
-                    "dateTime": datetime,
+                    "date": "today",
+                    "dateTime": "today",
                     "timeZone": "string"
                   },
                   "transparency": "string",
@@ -281,12 +280,12 @@ class GetSingleEvents(webapp2.RequestHandler):
                   }
                 }]
         self.response.out.write(json.dumps(events))
-         
+
 class UpdateEvent(webapp2.RequestHandler):
     def post(self):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(True))
-        
+
 class UpdateCalendarList(webapp2.RequestHandler):
     def post(self):
         self.response.headers['Content-Type'] = 'application/json'
@@ -297,7 +296,7 @@ app = webapp2.WSGIApplication([
     ('/reflectors.json', GetReflectorList),
     ('/calendars.json', GetCalendarList),
     ('/events.json', GetEvents),
-    ('/single-events.json', GetSingleEvents),
+    ('/single-event.json', GetSingleEvent),
     ('/update-event', UpdateEvent),
     ('/update-calendar', UpdateCalendarList)
 ], debug=True)
