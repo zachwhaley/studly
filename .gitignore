@@ -1,4 +1,4 @@
-# built application files
+#built application files
 *.apk
 *.ap_
 
@@ -77,4 +77,4 @@ coverage.xml
 docs/_build/
 
 # OS X
-.DS_Store
+.DS_Store.DS_Store
