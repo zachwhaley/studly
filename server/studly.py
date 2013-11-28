@@ -10,7 +10,9 @@ class MainPage(webapp2.RequestHandler):
 class GetReflectorList(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'application/json'
-        self.response.out.write(json.dumps(["emailaddress1@foo.com", "emailaddress2@foo.com"]))
+        self.response.out.write(json.dumps(
+            {"name": "refs", "list": ["emailaddress1@foo.com", "emailaddress2@foo.com"]}
+        ))
 
 class GetCalendarList(webapp2.RequestHandler):
     def get(self):
