@@ -21,34 +21,24 @@ decorator = OAuth2DecoratorFromClientSecrets(
 service = build('calendar', 'v3')
 
 class MainHandler(webapp2.RequestHandler):
-    
-  @decorator.oauth_required
-  def get(self):
-      # Get the authorized Http object created by the decorator.
-      http = decorator.http()
-      # Call the service using the authorized Http object.
-      request = service.events().list(calendarId='primary')
-      response = request.execute(http=http)
-
-
-class GetCertificate(webapp2.RequestHandler):
     def get(self):
-        calendarCertificate.getCertificate()
-        #print (http)        
-        #self.response.out.write(http)
+        self.response.out.write("Studly")
+
 
 class GetReflectorList(webapp2.RequestHandler):
     def get(self):          
-        reflectorList = self.request.get('reflectorList')
+        reflectorList = "reflectorList1"
         emails = calendarListUpdate.getReflectorList(reflectorList, displayWarning = False) 
         self.response.out.write(json.dumps(emails))
         
 class GetCalendarList(webapp2.RequestHandler):
+    @decorator.oauth_required
     def get(self):          
-        calendarId = self.request.get('calendarId')
+        # Get the authorized Http object created by the decorator.
+        http = decorator.http()
         #hard-coded data for testing purposes:
         calendarId = "trevor.latson@gmail.com"
-        calendar_list = calendarListUpdate.getReflectorList(calendarId) 
+        calendar_list = calendarListUpdate.getCalendarList(calendarId, http) 
         self.response.out.write(json.dumps(calendar_list))
         
 class GetEvents(webapp2.RequestHandler):
@@ -90,7 +80,6 @@ class UpdateCalendarList(webapp2.RequestHandler):
                 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
-    ('/certificate.json', GetCertificate),
     ('/reflectors.json', GetReflectorList),
     ('/calendars.json', GetCalendarList),
     ('/events.json', GetEvents),

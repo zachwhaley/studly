@@ -8,6 +8,12 @@ import calendarAuthenticate
 #import mySQLconnect
 from dateutil import parser
 
+from google.appengine.ext import ndb
+from apiclient.discovery import build
+from google.appengine.ext import webapp
+
+service = build('calendar', 'v3')
+
 def getReflectorList(reflectorList, displayWarning = False):
 #     reflectorList = "/var/lib/majordomo/lists/" + reflectorList
 #     try: 
@@ -26,16 +32,10 @@ def getReflectorList(reflectorList, displayWarning = False):
     emails = ["trevor.latson@gmail.com", "zachbwhaley@gmail.com"]
     return emails
 
-def getCalendarList(calendarId):
-    page_token = None
-    while True:
-        service = calendarAuthenticate.getService(calendarId)
-        calendar_list = service.calendarList().list(pageToken=page_token).execute()
-        page_token = calendar_list.get('nextPageToken')
-        if not page_token:
-            break
-    
-    return calendar_list
+def getCalendarList(calendarId, http):
+    request = service.calendarList().list()
+    response = request.execute(http)
+    return response
 
 
 def getEvents(calendarId, pageToken=None):
@@ -125,7 +125,7 @@ def updateEvent(event, calendarId, reflectorList, debug = False):
             try:
                 service.events().update(calendarId=calendarId, eventId=event['id'], body=event, sendNotifications = True).execute()
             except: 
-                print "WARNING: Calendar Usage Limits Exceeded."
+                print "WARNING: Update Unsuccessful."
                 return False
             time.sleep(10)
             return True
