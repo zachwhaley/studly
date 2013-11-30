@@ -1,7 +1,6 @@
 import json
 import webapp2
 import calendarListUpdate
-import calendarCertificate
 import os
 
 from google.appengine.ext import ndb
@@ -75,7 +74,7 @@ class UpdateCalendarList(webapp2.RequestHandler):
         calendarId = "trevor.latson@gmail.com"
         mappings = [
                     {"title": "testEvent1",
-                     "reflectorList": ["trevor.latson@gmail.com", "zachbwhaley@gmail.com", "newemailAddress@testEvent1reflectorList.mappings"],
+                     "reflectorList": ["trevor.latson@gmail.com", "zachbwhaley@gmail.com", "neweremailAddress@testEvent1reflectorList.mappings"],
                      "nextStartTime": "now!",
                      "recurringTime": "Every Tuesday at 10:00am",
                      "location": "Trevor's House"},
@@ -83,8 +82,6 @@ class UpdateCalendarList(webapp2.RequestHandler):
         
         response = calendarListUpdate.updateCalendarList(mappings, calendarId, http)
         self.response.out.write(response)
-
-        
 
                 
 app = webapp2.WSGIApplication([
