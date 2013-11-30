@@ -78,7 +78,8 @@ def updateEvent(event, calendarId, reflectorList, httpAuth, debug = False):
                 print 'Removing: ' , attendee['email'] , 'from the event: ' , event['summary'], 'occuring on: ', event['start']['dateTime']
                 attendeeRemovals.append(attendee)
                 update = True
-                numUpdates = numUpdates + 1
+                #this counter limits the number of modificaitons that are made to a calendar per cycle. For now it is unnecessary. 
+                #numUpdates = numUpdates + 1
 
     for attendeeRemoval in attendeeRemovals:
             event['attendees'].remove(attendeeRemoval)
@@ -90,7 +91,8 @@ def updateEvent(event, calendarId, reflectorList, httpAuth, debug = False):
                 print 'Adding: ' , oneReflectorEmail , 'to the event: ' , event['summary'], 'occuring on: ', event['start']['dateTime']
                 event['attendees'].append( dict( email = oneReflectorEmail, responseStatus = 'needsAction' ) )
                 update = True
-                numUpdates = numUpdates + 1
+                #this counter limits the number of modificaitons that are made to a calendar per cycle. For now it is unnecessary. 
+                #numUpdates = numUpdates + 1
 
     if update: 
         if debug == False:
@@ -130,6 +132,8 @@ def updateCalendarList(mappings, calendarId, httpAuth, TimezoneOffset = 0, debug
                     if event['summary'] == entry['title']:
                        if event['organizer']['email'] == calendar['id']:
                            print "\nExamining the event: " , event['summary']
+                           # Store the event location to the mappings object
+                           entry['location'] = event['location']
                            # Output recurring event information to the console and store it to the mappings object
                            if 'recurrence' in event:
                                print "The event recurs: "
@@ -138,7 +142,7 @@ def updateCalendarList(mappings, calendarId, httpAuth, TimezoneOffset = 0, debug
                                # Correct for Timezone offsets
                                originalRecurringTime = originalRecurringTime + datetime.timedelta(hours = TimezoneOffset)
                                
-                               # Parse the RRULE into a dictionary
+                               # Parse the RRULE (recurrence rule) into a dictionary
                                RRULE = str(event['recurrence'][0])
                                rrulef = RRULE.split(';')
                                rruleDict = {}                                    
@@ -174,7 +178,7 @@ def updateCalendarList(mappings, calendarId, httpAuth, TimezoneOffset = 0, debug
                                       print recurringStartTimef
 
                                 
-                           # Display incormation for single events and update the mappings object
+                           # Display information for single events and update the mappings object
                            if 'start' in event:
                                for nextEvent in nextEvents['items']:
                                    if 'summary' in nextEvent:
@@ -191,7 +195,7 @@ def updateCalendarList(mappings, calendarId, httpAuth, TimezoneOffset = 0, debug
                                                            nextStartTimef = nextStartTime.strftime("%A, %B %d, %Y %I:%M%p")
                                                            print "The the next event start time is: \n", nextStartTimef
                                                            #update the mappings with the next event starting time, and print it to the console
-                                                           entry['nextStartTime']
+                                                           entry['nextStartTime'] = nextStartTimef
                                                            eventsRead.append(nextEvent['summary'])
                                                            break
                               
