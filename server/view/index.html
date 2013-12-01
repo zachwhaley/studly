@@ -48,12 +48,6 @@
     </style>
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
 
-    <!-- Fav and touch icons -->
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png">
-      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png">
-                    <link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png">
-                                   <link rel="shortcut icon" href="ico/favicon.png">
   </head>
 
   <body>
@@ -85,7 +79,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.js"></script>
+    <script src="js/bootstrap.min.js"></script>
 
     <script>
     $(document).ready(function() {
@@ -135,6 +129,34 @@
               )
             );
           });
+          $("#events")
+          .append($('<div>')
+            .attr("class", "list-group-item")
+            .append($('<form>')
+              .attr("class", "form-inline")
+              .attr("role", "form")
+              .attr("action", "#")
+              .append($('<div>')
+                .attr("class", "form-group")
+                .append($('<label>')
+                  .attr("class", "sr-only")
+                  .attr("for", "newEmail")
+                  .text("Email address")
+                )
+                .append($('<input>')
+                  .attr("type", "email")
+                  .attr("class", "form-control")
+                  .attr("id", "newEmail")
+                  .attr("placeholder", "Enter email")
+                )
+              )
+              .append($('<button>')
+                .attr("type", "submit")
+                .attr("class", "btn btn-default")
+                .text("Join")
+              )
+            )
+          )
         });
       });
     });
