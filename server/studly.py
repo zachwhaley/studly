@@ -19,10 +19,41 @@ decorator = OAuth2DecoratorFromClientSecrets(
 
 service = build('calendar', 'v3')
 
+class Mappings(ndb.Model):
+    title = ndb.StringProperty()
+    reflectorList = ndb.StringProperty(repeated=True)
+    calendarId = ndb.StringProperty()
+    nextStartTime = ndb.StringProperty()
+    recurringStartTime = ndb.StringProperty()
+    location = ndb.StringProperty()
 
+    
 class MainHandler(webapp2.RequestHandler):
     def get(self):
         self.response.out.write("Studly")
+        
+class GetMappings(webapp2.RequestHandler):
+    def get(self):
+        self.response.out.write(json.dumps([m.to_dict() for m in Mappings.query().fetch()]))
+    
+class SetMappings(webapp2.RequestHandler):
+    def get(self):
+        with open('set-mappings.html', 'r') as f:
+            html = f.read()
+        self.response.out.write(html) 
+        
+    def post(self):
+        mapping = Mappings()
+        mapping.title = self.request.get('title')
+        reflectorsString = self.request.get('reflectorList')
+        # Parse the string into a list of email addresses and store it into the reflectorList field
+        mapping.reflectorList = [reflectorsString.strip() for reflector in reflectorsString.split(',')]
+        mapping.calendarId = self.request.get('calendarId')
+        mapping.nextStartTime = self.request.get('nextStartTime')
+        mapping.recurringStartTime = self.request.get('recurringStartTime')
+        mapping.location = self.request.get('location')
+
+        mapping.put()
 
         
 class GetCalendarList(webapp2.RequestHandler):
@@ -74,7 +105,8 @@ class UpdateCalendarList(webapp2.RequestHandler):
         calendarId = "trevor.latson@gmail.com"
         mappings = [
                     {"title": "testEvent1",
-                     "reflectorList": ["trevor.latson@gmail.com", "zachbwhaley@gmail.com", "neweremailAddress@testEvent1reflectorList.mappings"],
+                     "reflectorList": ["trevor.latson@gmail.com", "zachbwhaley@gmail.com", "newestemailaddress@testevent1reflectorlist.mappings"],
+                     "calendarId": "trevor.latson@gmail.com",
                      "nextStartTime": "now!",
                      "recurringTime": "Every Tuesday at 10:00am",
                      "location": "Trevor's House"},
@@ -86,6 +118,8 @@ class UpdateCalendarList(webapp2.RequestHandler):
                 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
+    ('/get-mappings.json', GetMappings),
+    ('/set-mappings.json', SetMappings),
     ('/calendars.json', GetCalendarList),
     ('/events.json', GetEvents),
     ('/single-events.json', GetSingleEvents),

@@ -201,7 +201,7 @@ def updateCalendarList(mappings, calendarId, httpAuth, TimezoneOffset = 0, debug
                               
                            try:
                                response = updateEvent( event, calendarId, entry['reflectorList'], httpAuth, debug )
-                               print response
+                               #print response
                            except KeyboardInterrupt:
                                print 'Update canceled. Moving to next event.'
                                return mappings
