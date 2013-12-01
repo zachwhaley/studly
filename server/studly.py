@@ -12,12 +12,13 @@ class GetMappings(webapp2.RequestHandler):
                      "nextStartTime": "now!",
                      "recurringTime": "Every Tuesday at 10:00am",
                      "location": "Trevor's House"},
-                    {"title": "testEvent1",
+                    {"title": "testEvent2",
                      "reflectorList": ["trevor.latson@gmail.com", "zachbwhaley@gmail.com"],
                      "nextStartTime": "now!",
                      "recurringTime": "Every Tuesday at 10:00am",
                      "location": "Trevor's House"},
         ]
+        self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(mappings))
 
 class EventManager(webapp2.RequestHandler):

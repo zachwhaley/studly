@@ -9,42 +9,42 @@
     <script>
     $(document).ready(function() {
         $.getJSON("/mappings.json", function(events) {
-            var info = $("#info");
             $.each(events, function(i, v) {
-                $(info).append($('<h3>').text(v.title));
+                $("#info").append($('<h3>').text(v.title));
 
-                var div = $('<div>'); 
-                $(info).append(div);
-                $(div)
-                .append($('<table>')
-                    .append($('<tr>')
-                        .append($('<td>')
-                            .text("Next Event Date:")
-                        )
-                        .append($('<td>')
-                            .text(v.nextStartTime)
-                        )
+                var table = $('<table>');
+                $(table)
+                .append($('<tr>')
+                    .append($('<td>')
+                        .text("Next Event Date: ")
                     )
-                    .append($('<tr>')
-                        .append($('<td>')
-                            .text("Recurring Event")
-                        )
-                        .append($('<td>')
-                            .text(v.recurringTime)
-                        )
+                    .append($('<td>')
+                        .text(v.nextStartTime)
                     )
-                    .append($('<tr>')
-                        .append($('<td>')
-                            .text("Location:")
-                        )
-                        .append($('<td>')
-                            .text(v.location)
+                )
+                .append($('<tr>')
+                    .append($('<td>')
+                        .text("Recurring Event: ")
+                    )
+                    .append($('<td>')
+                        .text(v.recurringTime)
+                    )
+                )
+                .append($('<tr>')
+                    .append($('<td>')
+                        .text("Location: ")
+                    )
+                    .append($('<td>')
+                        .text(v.location)
+                    )
+                )
+                .append($('<tr>')
+                    .append($('<td>')
+                        .append($('<b>')
+                            .text("Attendees")
                         )
                     )
                 );
-
-                var table = $('<table>');
-                $(div).append(table);
                 $.each(v.reflectorList, function(i, r) {
                     $(table)
                     .append($('<tr>')
@@ -71,31 +71,39 @@
                                 )
                             )
                         )
-                    )
+                    );
                 });
-
-                $(div)
-                .append($('<form>')
-                    .attr("action", "join")
-                    .attr("method", "POST")
-                    .append($('<input>')
-                        .attr("type", "text")
-                        .attr("name", "email")
-                        .attr("placeholder", "email")
-                    )
-                    .append($('<input>')
-                        .attr("type", "hidden")
-                        .attr("name", "event")
-                        .attr("value", v.title)
-                    )
-                    .append($('<input>')
-                        .attr("type", "submit")
-                        .attr("value", "Join!")
+                $(table)
+                .append($('<tr>')
+                    .append($('<td>')
+                        .append($('<form>')
+                            .attr("action", "join")
+                            .attr("method", "POST")
+                            .append($('<input>')
+                                .attr("type", "text")
+                                .attr("name", "email")
+                                .attr("placeholder", "email")
+                            )
+                            .append($('<input>')
+                                .attr("type", "hidden")
+                                .attr("name", "event")
+                                .attr("value", v.title)
+                            )
+                            .append($('<input>')
+                                .attr("type", "submit")
+                                .attr("value", "Join!")
+                            )
+                        )
                     )
                 );
+
+                $("#info")
+                .append($('<div>')
+                    .append(table)
+                );
             });
+            $("#info").accordion();
         });
-        $("#info").accordion();
     });
     </script>
 </head>
