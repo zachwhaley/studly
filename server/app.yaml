@@ -5,11 +5,15 @@ api_version: 1
 threadsafe: true
 
 handlers:
-- url: /.*
-  script: studly.app
+- url: /groups
+  static_files: view/groups.html
+  upload: view/groups.html
 
 - url: /calsync
   static_dir: calsync
+
+- url: /.*
+  script: studly.app
 
 libraries:
 - name: webapp2
