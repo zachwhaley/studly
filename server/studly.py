@@ -1,10 +1,6 @@
 import json
 import webapp2
 
-class MainPage(webapp2.RequestHandler):
-    def get(self):
-        self.response.out.write("Studly")
-
 class GetMappings(webapp2.RequestHandler):
     def get(self):
         mappings = [{"title": "testEvent1",
@@ -26,7 +22,6 @@ class EventManager(webapp2.RequestHandler):
         self.redirect('/groups')
 
 app = webapp2.WSGIApplication([
-    ('/', MainPage),
     ('/mappings.json', GetMappings),
     ('/join', EventManager),
     ('/leave', EventManager),

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Studly</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 20px;
+        padding-bottom: 40px;
+      }
+
+      /* Custom container */
+      .container-narrow {
+        margin: 0 auto;
+        max-width: 700px;
+      }
+      .container-narrow > hr {
+        margin: 30px 0;
+      }
+
+      /* Main marketing message and sign up button */
+      .jumbotron {
+        margin: 60px 0;
+        text-align: center;
+      }
+      .jumbotron h1 {
+        font-size: 72px;
+        line-height: 1;
+      }
+      .jumbotron .btn {
+        font-size: 21px;
+        padding: 14px 24px;
+      }
+
+      /* Supporting marketing content */
+      .marketing {
+        margin: 60px 0;
+      }
+      .marketing p + h4 {
+        margin-top: 28px;
+      }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png">
+                    <link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png">
+                                   <link rel="shortcut icon" href="ico/favicon.png">
+  </head>
+
+  <body>
+
+    <div class="container-narrow">
+
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+        <h3 class="muted">Studly Groups</h3>
+      </div>
+
+      <hr>
+
+      <div id="events" class="list_group"></div>
+
+      <hr>
+
+      <div class="footer">
+        <p>&copy; Studly 2013</p>
+      </div>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+
+    <script>
+    $(document).ready(function() {
+      $.getJSON("mappings.json", function(evts) {
+        $.each(evts, function(i, evt) {
+          $("#events")
+          .append($('<a>')
+            .attr("href", "#")
+            .attr("class", "list-group-item active")
+            .append($('<h4>')
+              .attr("class", "list-group-item-heading")
+              .text(evt.title)
+            )
+          );
+          $.each(evt.reflectorList, function(i, email) {
+            $("#events")
+            .append($('<div>')
+              .attr("class", "list-group-item")
+              .append($('<table>')
+                .attr("class", "table")
+                .append($('<td>')
+                  .append($('<h5>')
+                    .text(email)
+                  )
+                )
+                .append($('<td>')
+                  .append($('<form>')
+                    .attr("action", "leave")
+                    .attr("method", "POST")
+                    .append($('<input>')
+                      .attr("type", "submit")
+                      .attr("value", "Remove")
+                      .attr("class", "btn btn-danger")
+                    )
+                    .append($('<input>')
+                      .attr("type", "hidden")
+                      .attr("name", "email")
+                      .attr("value", email)
+                    )
+                    .append($('<input>')
+                      .attr("type", "hidden")
+                      .attr("name", "event")
+                      .attr("value", evt.title)
+                    )
+                  )
+                )
+              )
+            );
+          });
+        });
+      });
+    });
+    </script>
+</body>
+</html>
