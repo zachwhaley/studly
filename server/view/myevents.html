@@ -75,15 +75,39 @@
     <script>
     $(document).ready(function() {
       $.getJSON("get-mappings.json", function(evts) {
-        var evts = [{"title": "Thing"}];
+        <!-- TEMP -->
+        var evts = [{"title": "thing"}];
         $.each(evts, function(i, evt) {
           $("#events")
           .append($('<a>')
             .attr("class", "list-group-item active")
             .attr("href", "#")
-            .append($('<h3>')
-              .attr("class", "list-group-item-heading")
-              .text(evt.title)
+            .append($('<div>')
+              .attr("class", "row")
+              .append($('<div>')
+                .attr("class", "col-md-3")
+                .append($('<h3>')
+                  .attr("class", "list-group-item-heading")
+                  .text(evt.title)
+                )
+              )
+              .append($('<div>')
+                .attr("class", "col-md-6")
+                .append($('<form>')
+                  .attr("action", "remove-event")
+                  .attr("method", "POST")
+                  .append($('<input>')
+                    .attr("class", "btn btn-danger")
+                    .attr("type", "submit")
+                    .attr("value", "Remove Event")
+                  )
+                  .append($('<input>')
+                    .attr("type", "hidden")
+                    .attr("name", "event")
+                    .attr("value", evt.calendarId)
+                  )
+                )
+              )
             )
           );
           $.each(evt.reflectorList, function(i, email) {
