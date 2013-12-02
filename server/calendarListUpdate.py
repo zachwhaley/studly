@@ -127,51 +127,42 @@ def parseSingleRule(nextEvents, event, entry, TimezoneOffset = 0):
     return entry
 
 def updateEvent(event, calendarId, reflectorList, httpAuth, debug = False):
+    print reflectorList
     eventEmails = []
     attendeeRemovals = []
     addedEmails = []
-
     # Initialize a condition code for event changes
     update = False
     # Initialize a counter for modificaitons to event
     numUpdates = 0
-
+    # Initialize an empty attendee list if one does not exist
     if 'attendees' not in event:
         event['attendees'] = []
+        
     print "Checking attendee list of event: ",  event['summary']
     for attendee in event['attendees']:
-        if numUpdates < 3:
-            eventEmails.append(str(attendee['email'].lower()))
-            # remove attendees if their email address IS NOT on the reflector list
-            emailf = str.strip(str(attendee['email'].lower()))
-            if emailf not in reflectorList:
-                print 'Removing: ' , attendee['email'] , 'from the event: ' , event['summary'], 'occuring on: ', event['start']['dateTime']
-                attendeeRemovals.append(attendee)
-                update = True
-                #this counter limits the number of modificaitons that are made to a calendar per cycle. For now it is unnecessary. 
-                #numUpdates = numUpdates + 1
+#         eventEmails.append(str(attendee['email'].lower()))
+#         # remove attendees if their email address IS NOT on the reflector list
+#         emailf = str.strip(str(attendee['email'].lower()))
+        if attendee['email'] not in reflectorList:
+            print 'Removing: ' , attendee['email'] , 'from the event: ' , event['summary'], 'occuring on: ', event['start']['dateTime']
+            attendeeRemovals.append(attendee)
+            update = True
 
     for attendeeRemoval in attendeeRemovals:
             event['attendees'].remove(attendeeRemoval)
     
     for oneReflectorEmail in reflectorList:
-        if numUpdates < 3:
-            # add attendees if ther email address IS on the reflector list but not on the attendee list
-            if oneReflectorEmail not in eventEmails:
-                print 'Adding: ' , oneReflectorEmail , 'to the event: ' , event['summary'], 'occuring on: ', event['start']['dateTime']
-                event['attendees'].append( dict( email = oneReflectorEmail, responseStatus = 'needsAction' ) )
-                update = True
-                #this counter limits the number of modificaitons that are made to a calendar per cycle. For now it is unnecessary. 
-                #numUpdates = numUpdates + 1
+        # add attendees if ther email address IS on the reflector list but not on the attendee list
+        if oneReflectorEmail not in event['attendees']:
+            print 'Adding: ' , oneReflectorEmail , 'to the event: ' , event['summary'], 'occuring on: ', event['start']['dateTime']
+            event['attendees'].append( dict( email = oneReflectorEmail, responseStatus = 'needsAction' ) )
+            update = True
 
     if update: 
         if debug == False:
-            try:
-                request = service.events().update(calendarId=calendarId, eventId=event['id'], body=event, sendNotifications = True)
-                response = request.execute(http=httpAuth)
-            except: 
-                print "WARNING: Update Unsuccessful. Returning request"
-                return request
+            request = service.events().update(calendarId=calendarId, eventId=event['id'], body=event, sendNotifications = True)
+            response = request.execute(http=httpAuth)
             return response
 
 
