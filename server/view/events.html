@@ -56,7 +56,7 @@
 
     <script>
     $(document).ready(function() {
-      $.getJSON("mappings.json", function(evts) {
+      $.getJSON("get-mappings.json", function(evts) {
         $.each(evts, function(i, evt) {
           $("#events")
           .append($('<a>')
@@ -84,7 +84,7 @@
                   .append($('<input>')
                     .attr("type", "hidden")
                     .attr("name", "event")
-                    .attr("value", evt.title)
+                    .attr("value", evt.calendarId)
                   )
                 )
               )
@@ -118,7 +118,7 @@
                     .append($('<input>')
                       .attr("type", "hidden")
                       .attr("name", "event")
-                      .attr("value", evt.title)
+                      .attr("value", evt.calendarId)
                     )
                   )
                 )
