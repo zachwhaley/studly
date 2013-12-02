@@ -124,7 +124,6 @@ class UpdateCalendarList(webapp2.RequestHandler):
         response = calendarListUpdate.updateCalendarList(mappings, calendarId, http)
         self.response.out.write(response)
 
-                
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/get-mappings.json', GetMappings),
