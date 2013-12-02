@@ -44,8 +44,11 @@
       </div>
     </div>
 
-    <div class="container">
-      <div id="events" class="list_group"></div>
+    <div class="row">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+        <div id="events" class="list_group"></div>
+      </div>
     </div>
 
     <!-- Le javascript
@@ -67,14 +70,14 @@
             .append($('<div>')
               .attr("class", "row")
               .append($('<div>')
-                .attr("class", "col-md-3")
+                .attr("class", "col-md-8")
                 .append($('<h3>')
                   .attr("class", "list-group-item-heading")
                   .text(evt.title)
                 )
               )
               .append($('<div>')
-                .attr("class", "col-md-6")
+                .attr("class", "col-md-1")
                 .append($('<form>')
                   .attr("action", "join")
                   .attr("method", "POST")
