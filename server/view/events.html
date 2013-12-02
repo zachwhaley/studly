@@ -33,31 +33,21 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <!-- 
-            <li class="active"><a href="#">Events</a></li>
-            <li><a href="#about">My Events</a></li>
-            -->
+            <li class="active"><a href="/">All Events</a></li>
+            <li><a href="me">My Events</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Sign in</a></li>
+            <li>
+              <a href="https://github.com/zachwhaley/studly/tree/webui">Fork us!</a>
+            </li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </div>
 
     <div class="container">
-
       <div id="events" class="list_group"></div>
-
-      <hr>
-
-      <div class="footer">
-        <p>
-          <a href="https://github.com/zachwhaley/studly/tree/webui">Fork us!</a>
-        </p>
-      </div>
-
-    </div> <!-- /container -->
+    </div>
 
     <!-- Le javascript
     ================================================== -->
@@ -73,9 +63,23 @@
           .append($('<a>')
             .attr("class", "list-group-item active")
             .attr("href", "#")
-            .append($('<h3>')
-              .attr("class", "list-group-item-heading")
-              .text(evt.title)
+            .append($('<div>')
+              .attr("class", "row")
+              .append($('<div>')
+                .attr("class", "col-md-3")
+                .append($('<h3>')
+                  .attr("class", "list-group-item-heading")
+                  .text(evt.title)
+                )
+              )
+              .append($('<div>')
+                .attr("class", "col-md-6")
+                .append($('<button>')
+                  .attr("class", "btn btn-default")
+                  .attr("type", "submit")
+                  .text("Join")
+                )
+              )
             )
           );
           $.each(evt.reflectorList, function(i, email) {
@@ -94,9 +98,9 @@
                     .attr("action", "leave")
                     .attr("method", "POST")
                     .append($('<input>')
+                      .attr("class", "btn btn-danger")
                       .attr("type", "submit")
                       .attr("value", "Remove")
-                      .attr("class", "btn btn-danger")
                     )
                     .append($('<input>')
                       .attr("type", "hidden")
@@ -113,50 +117,6 @@
               )
             );
           });
-          $("#events")
-          .append($('<div>')
-            .attr("class", "list-group-item")
-            .append($('<div>')
-              .attr("class", "row")
-              .append($('<form>')
-                .attr("class", "form-inline")
-                .attr("action", "join")
-                .attr("method", "POST")
-                .attr("role", "form")
-                .append($('<div>')
-                  .attr("class", "col-md-3")
-                  .append($('<div>')
-                    .attr("class", "form-group")
-                    .append($('<label>')
-                      .attr("class", "sr-only")
-                      .attr("for", "newEmail")
-                      .text("Email address")
-                    )
-                    .append($('<input>')
-                      .attr("class", "form-control")
-                      .attr("id", "newEmail")
-                      .attr("type", "email")
-                      .attr("name", "email")
-                      .attr("placeholder", "Enter email")
-                    )
-                    .append($('<input>')
-                      .attr("type", "hidden")
-                      .attr("name", "event")
-                      .attr("value", evt.title)
-                    )
-                  )
-                )
-                .append($('<div>')
-                  .attr("class", "col-md-6")
-                  .append($('<button>')
-                    .attr("class", "btn btn-default")
-                    .attr("type", "submit")
-                    .text("Join")
-                  )
-                )
-              )
-            )
-          )
         });
       });
     });

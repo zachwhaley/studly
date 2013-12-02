@@ -6,8 +6,11 @@ threadsafe: true
 
 handlers:
 - url: /
-  static_files: view/index.html
-  upload: view/index.html
+  static_files: view/events.html
+  upload: view/events.html
+- url: /me
+  static_files: view/myevents.html
+  upload: view/myevents.html
 
 - url: /calsync
   static_dir: calsync
