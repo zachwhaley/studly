@@ -14,7 +14,6 @@
 
     <!-- Custom styles for this template -->
     <link href="css/navbar-fixed-top.css" rel="stylesheet">
-    <!-- Custom styles for this template -->
   </head>
 
   <body>
@@ -74,10 +73,19 @@
               )
               .append($('<div>')
                 .attr("class", "col-md-6")
-                .append($('<button>')
-                  .attr("class", "btn btn-default")
-                  .attr("type", "submit")
-                  .text("Join")
+                .append($('<form>')
+                  .attr("action", "join")
+                  .attr("method", "POST")
+                  .append($('<input>')
+                    .attr("class", "btn btn-default")
+                    .attr("type", "submit")
+                    .attr("value", "Join")
+                  )
+                  .append($('<input>')
+                    .attr("type", "hidden")
+                    .attr("name", "event")
+                    .attr("value", evt.title)
+                  )
                 )
               )
             )
