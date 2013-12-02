@@ -28,10 +28,6 @@ class Mappings(ndb.Model):
     location = ndb.StringProperty()
 
     
-class MainHandler(webapp2.RequestHandler):
-    def get(self):
-        self.response.out.write("Studly")
-        
 class GetMappings(webapp2.RequestHandler):
     def get(self):
         self.response.out.write(json.dumps([m.to_dict() for m in Mappings.query().fetch()]))
@@ -125,7 +121,6 @@ class UpdateCalendarList(webapp2.RequestHandler):
         self.response.out.write(response)
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler),
     ('/get-mappings.json', GetMappings),
     ('/set-mappings.json', SetMappings),
     ('/calendars.json', GetCalendarList),
