@@ -27,6 +27,33 @@ class Mappings(ndb.Model):
     recurringStartTime = ndb.StringProperty()
     location = ndb.StringProperty()
 
+class AddEmail(webapp2.RequestHandler):
+    def get(self):          
+        with open('add-email.html', 'r') as f:
+            html = f.read()
+        self.response.out.write(html)
+        
+    @decorator.oauth_required
+    def post(self):
+        # Get the authorized Http object created by the decorator.
+        http = decorator.http()
+        
+        # Retrieve the mapping with the title specified
+        mapping = Mappings.query(Mappings.title == self.request.get('title')).fetch()
+        # Iterate through each mapping object that matches the specified event title (usually just one)
+        maps = []
+        for map in mapping:
+            # Append the specified emailAddress to the mapping object
+            map.reflectorList.append(self.request.get('emailAddress'))
+            # Store the updated mapping object in the datastore
+            map.put()
+            maps.append(map.to_dict())
+            # Call UpdateCalendarList with the updated mapping object
+            response = calendarListUpdate.updateCalendarList(maps, self.request.get('calendarId'), http)
+        # Return the response from Google
+        self.response.out.write(json.dumps(response))
+        
+        
     
 class GetMappings(webapp2.RequestHandler):
     def get(self):
@@ -43,12 +70,13 @@ class SetMappings(webapp2.RequestHandler):
         mapping.title = self.request.get('title')
         reflectorsString = self.request.get('reflectorList')
         # Parse the string into a list of email addresses and store it into the reflectorList field
-        mapping.reflectorList = [reflectorsString.strip() for reflector in reflectorsString.split(',')]
+        reflectors = reflectorsString.split(',')
+        for reflector in reflectors:
+            mapping.reflectorList.append(reflector.lower())
         mapping.calendarId = self.request.get('calendarId')
         mapping.nextStartTime = self.request.get('nextStartTime')
         mapping.recurringStartTime = self.request.get('recurringStartTime')
         mapping.location = self.request.get('location')
-
         mapping.put()
 
         
@@ -103,19 +131,18 @@ class GetSingleEvents(webapp2.RequestHandler):
 class UpdateCalendarList(webapp2.RequestHandler):
     @decorator.oauth_required
     def get(self):
+        with open('update-calendar.html', 'r') as f:
+            html = f.read()
+        self.response.out.write(html)
+        
+    @decorator.oauth_required
+    def post(self):
         # Get the authorized Http object created by the decorator.
         http = decorator.http()
         
-        #hard-coded data for testing purposes:
-        calendarId = "trevor.latson@gmail.com"
-        mappings = [
-                    {"title": "testEvent1",
-                     "reflectorList": ["trevor.latson@gmail.com", "zachbwhaley@gmail.com", "newestemailaddress@testevent1reflectorlist.mappings"],
-                     "calendarId": "trevor.latson@gmail.com",
-                     "nextStartTime": "now!",
-                     "recurringTime": "Every Tuesday at 10:00am",
-                     "location": "Trevor's House"},
-                    ]
+        calendarId = self.request.get('calendarId')
+        mappings = [m.to_dict() for m in Mappings.query(Mappings.calendarId == calendarId).fetch()]
+        
         
         response = calendarListUpdate.updateCalendarList(mappings, calendarId, http)
         self.response.out.write(response)
@@ -127,6 +154,7 @@ app = webapp2.WSGIApplication([
     ('/get-settings.json', GetSettings),
     ('/events.json', GetEvents),
     ('/single-events.json', GetSingleEvents),
+    ('/add-email', AddEmail),
     ('/update-calendar', UpdateCalendarList),
     (decorator.callback_path, decorator.callback_handler()),
 ], debug=True)
