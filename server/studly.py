@@ -1,22 +1,31 @@
 import json
 import webapp2
 
-from google.appengine.ext import ndb
-
-class MainPage(webapp2.RequestHandler):
+class GetMappings(webapp2.RequestHandler):
     def get(self):
-        self.response.out.write("Studly")
-
-class GetGroups(webapp2.RequestHandler):
-    def get(self):
-        events = [
-            {"name": "foo", "joined": True},
-            {"name": "bar", "joined": False}
+        mappings = [{"title": "testEvent1",
+                     "reflectorList": ["trevor.latson@gmail.com", "zachbwhaley@gmail.com"],
+                     "nextStartTime": "now!",
+                     "recurringTime": "Every Tuesday at 10:00am",
+                     "location": "Trevor's House"},
+                    {"title": "testEvent2",
+                     "reflectorList": ["trevor.latson@gmail.com", "zachbwhaley@gmail.com"],
+                     "nextStartTime": "now!",
+                     "recurringTime": "Every Tuesday at 10:00am",
+                     "location": "Trevor's House"},
         ]
         self.response.headers['Content-Type'] = 'application/json'
-        self.response.out.write(json.dumps(events))
+        self.response.out.write(json.dumps(mappings))
+
+class EventManager(webapp2.RequestHandler):
+    def post(self):
+        email = self.request.get('email')
+        self.response.out.write(email)
+        event = self.request.get('event')
+        self.response.out.write(event)
 
 app = webapp2.WSGIApplication([
-    ('/', MainPage),
-    ('/groups', GetGroups),
+    ('/mappings.json', GetMappings),
+    ('/join', EventManager),
+    ('/leave', EventManager),
 ], debug=True)

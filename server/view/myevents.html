@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Studly</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/navbar-fixed-top.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="">Studly</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/">All Events</a></li>
+            <li class="active"><a href="me">My Events</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/zachwhaley/studly/tree/webui">Fork us!</a>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="events" class="list_group"></div>
+    </div>
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script>
+    $(document).ready(function() {
+      $.getJSON("mappings.json", function(evts) {
+        $.each(evts, function(i, evt) {
+          $("#events")
+          .append($('<a>')
+            .attr("class", "list-group-item active")
+            .attr("href", "#")
+            .append($('<h3>')
+              .attr("class", "list-group-item-heading")
+              .text(evt.title)
+            )
+          );
+          $.each(evt.reflectorList, function(i, email) {
+            $("#events")
+            .append($('<div>')
+              .attr("class", "list-group-item")
+              .append($('<div>')
+                .attr("class", "row")
+                .append($('<div>')
+                  .attr("class", "col-md-3")
+                  .text(email)
+                )
+                .append($('<div>')
+                  .attr("class", "col-md-6")
+                  .append($('<form>')
+                    .attr("action", "leave")
+                    .attr("method", "POST")
+                    .append($('<input>')
+                      .attr("type", "submit")
+                      .attr("value", "Remove")
+                      .attr("class", "btn btn-danger")
+                    )
+                    .append($('<input>')
+                      .attr("type", "hidden")
+                      .attr("name", "email")
+                      .attr("value", email)
+                    )
+                    .append($('<input>')
+                      .attr("type", "hidden")
+                      .attr("name", "event")
+                      .attr("value", evt.title)
+                    )
+                  )
+                )
+              )
+            );
+          });
+          $("#events")
+          .append($('<div>')
+            .attr("class", "list-group-item")
+            .append($('<div>')
+              .attr("class", "row")
+              .append($('<form>')
+                .attr("class", "form-inline")
+                .attr("action", "join")
+                .attr("method", "POST")
+                .attr("role", "form")
+                .append($('<div>')
+                  .attr("class", "col-md-3")
+                  .append($('<div>')
+                    .attr("class", "form-group")
+                    .append($('<label>')
+                      .attr("class", "sr-only")
+                      .attr("for", "newEmail")
+                      .text("Email address")
+                    )
+                    .append($('<input>')
+                      .attr("class", "form-control")
+                      .attr("id", "newEmail")
+                      .attr("type", "email")
+                      .attr("name", "email")
+                      .attr("placeholder", "Add email")
+                    )
+                    .append($('<input>')
+                      .attr("type", "hidden")
+                      .attr("name", "event")
+                      .attr("value", evt.title)
+                    )
+                  )
+                )
+                .append($('<div>')
+                  .attr("class", "col-md-6")
+                  .append($('<button>')
+                    .attr("class", "btn btn-default")
+                    .attr("type", "submit")
+                    .text("Join")
+                  )
+                )
+              )
+            )
+          )
+        });
+      });
+    });
+    </script>
+</body>
+</html>
