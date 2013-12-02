@@ -68,6 +68,15 @@ class GetCalendarList(webapp2.RequestHandler):
         calendar_list = calendarListUpdate.getCalendarList(calendarId, http) 
         self.response.out.write(json.dumps(calendar_list))
         
+class GetSettings(webapp2.RequestHandler):
+    @decorator.oauth_required
+    def get(self):          
+        # Get the authorized Http object created by the decorator.
+        http = decorator.http()
+
+        settings = calendarListUpdate.getSettings(http) 
+        self.response.out.write(json.dumps(settings))
+        
         
 class GetEvents(webapp2.RequestHandler):
     @decorator.oauth_required
@@ -121,6 +130,7 @@ app = webapp2.WSGIApplication([
     ('/get-mappings.json', GetMappings),
     ('/set-mappings.json', SetMappings),
     ('/calendars.json', GetCalendarList),
+    ('/get-settings.json', GetSettings),
     ('/events.json', GetEvents),
     ('/single-events.json', GetSingleEvents),
     ('/update-calendar', UpdateCalendarList),

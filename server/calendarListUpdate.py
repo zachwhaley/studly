@@ -14,8 +14,13 @@ from google.appengine.ext import webapp
 service = build('calendar', 'v3')
 
 
-def getCalendarList(calendarId, httpAuth):
+def getCalendarList(httpAuth):
     request = service.calendarList().list()
+    response = request.execute(http=httpAuth)
+    return response
+
+def getSettings(httpAuth):
+    request = service.settings().list()
     response = request.execute(http=httpAuth)
     return response
 
@@ -55,6 +60,71 @@ def getSingleEvents(calendarId, httpAuth):
     response = request.execute(http=httpAuth)
     return response
 
+def parseRecurrenceRule(event, entry, TimezoneOffset = 0):
+    print "The event recurs: "
+    originalRecurringTime = datetime.datetime.strptime( str( event['start']['dateTime'] )[0:19], '%Y-%m-%dT%H:%M:%S' )
+   
+    # Correct for Timezone offsets
+    originalRecurringTime = originalRecurringTime + datetime.timedelta(hours = TimezoneOffset)
+   
+    # Parse the RRULE (recurrence rule) into a dictionary
+    RRULE = str(event['recurrence'][0])
+    rrulef = RRULE.split(';')
+    rruleDict = {}                                    
+    for section in rrulef:
+        keyValuePair = section.split('=')
+        rruleDict[ keyValuePair[0] ] = keyValuePair[1]
+
+    # Display information for weekly recurring events and update the mappings object
+    ordinals = {'1': 'first', '2': 'second', '3': 'third', '4': 'forth', '-': 'last'}
+    if rruleDict['RRULE:FREQ'] == 'WEEKLY':
+        if 'INTERVAL' not in rruleDict:
+            #update the mappings with the weekly event starting time, and print it to the console
+            recurringStartTimef = "Weekly on %s at %s" % ( originalRecurringTime.strftime("%A"), originalRecurringTime.strftime("%I:%M%p") )
+            entry['recurringTime'] = recurringStartTimef
+            print recurringStartTimef
+            return entry
+        else:
+            #update the mappings with the semi-weekly event starting time, and print it to the console
+            recurringStartTimef = "Every " + rruleDict['INTERVAL'] + " weeks on %s at %s" % ( originalRecurringTime.strftime("%A"), originalRecurringTime.strftime("%I:%M%p") )
+            entry['recurringTime'] = recurringStartTimef
+            print recurringStartTimef
+            return entry
+   
+    # Display information for monthly recurring events and update the mappings object
+    if rruleDict['RRULE:FREQ'] == 'MONTHLY':
+       if len(rruleDict['BYDAY']) > 2:
+           #update the mappings with the monthly event starting time, and print it to the console
+           recurringStartTimef = "Monthly on the %s %s at %s" % (ordinals[ rruleDict['BYDAY'][0:1] ], originalStartTime.strftime("%A"), originalStartTime.strftime("%I:%M%p") )
+           entry['recurringTime'] = recurringStartTimef
+           print recurringStartTimef
+           return entry
+       else:
+           #update the mappings with the monthly (by day) event starting time, and print it to the console
+           recurringStartTimef = "Monthly on day %s at %s" % (originalStartTime.strftime("%d"), originalStartTime.strftime("%I:%M%p") )
+           entry['recurringTime'] = recurringStartTimef
+           print recurringStartTimef
+           return entry
+
+def parseSingleRule(nextEvents, event, entry, TimezoneOffset = 0):
+    eventsRead = []
+    for nextEvent in nextEvents['items']:
+        if 'summary' in nextEvent:
+            if nextEvent['summary'] == event['summary']:
+                if 'start' in nextEvent:
+                    if 'dateTime' in nextEvent['start']:
+                        nextStartTime = datetime.datetime.strptime( str( nextEvent['start']['dateTime'] )[0:19], '%Y-%m-%dT%H:%M:%S' )
+                        # Correct for Timezone offsets
+                        nextStartTime = nextStartTime + datetime.timedelta(hours = TimezoneOffset)
+                        if nextStartTime > datetime.datetime.now():
+                            if nextEvent['summary'] not in eventsRead:
+                                nextStartTimef = nextStartTime.strftime("%A, %B %d, %Y %I:%M%p")
+                                print "The the next event start time is: \n", nextStartTimef
+                                #update the mappings with the next event starting time, and print it to the console
+                                entry['nextStartTime'] = nextStartTimef
+                                eventsRead.append(nextEvent['summary'])
+                                break
+    return entry
 
 def updateEvent(event, calendarId, reflectorList, httpAuth, debug = False):
     eventEmails = []
@@ -108,11 +178,10 @@ def updateEvent(event, calendarId, reflectorList, httpAuth, debug = False):
 
 def updateCalendarList(mappings, calendarId, httpAuth, TimezoneOffset = 0, debug = False):
     print "The current time is: " , datetime.datetime.now()
-    eventsRead = []
     # Set a condition code for update failure (ie calendar usage limits exceed)
     updateFail = False
     # Retrieve the list of calendars
-    calendar_list = getCalendarList(calendarId, httpAuth)
+    calendar_list = getCalendarList(httpAuth)
 
     # Iterate through all calendars
     for calendar in calendar_list['items']:
@@ -120,8 +189,7 @@ def updateCalendarList(mappings, calendarId, httpAuth, TimezoneOffset = 0, debug
         print "Searching events in calendar: " + calendar['id']
         # Get events from this calendar. Returns single entries for recurring events, and not individual instances
         events = getEvents(calendarId, httpAuth)
-        # Get single events from this calendar. Returns the individual instances of recurring events ordered by start date
-        nextEvents = getSingleEvents(calendarId, httpAuth)
+
         
         for event in events['items']:
             # Iterate through each entry in the mappings
@@ -132,73 +200,18 @@ def updateCalendarList(mappings, calendarId, httpAuth, TimezoneOffset = 0, debug
                     if event['summary'] == entry['title']:
                        if event['organizer']['email'] == calendar['id']:
                            print "\nExamining the event: " , event['summary']
+                           # Make the event public
+                           event['visibility'] = "public"
                            # Store the event location to the mappings object
                            entry['location'] = event['location']
-                           # Output recurring event information to the console and store it to the mappings object
+                           # Display information for recurring event information to the console and store it to the mappings object
                            if 'recurrence' in event:
-                               print "The event recurs: "
-                               originalRecurringTime = datetime.datetime.strptime( str( event['start']['dateTime'] )[0:19], '%Y-%m-%dT%H:%M:%S' )
-                               
-                               # Correct for Timezone offsets
-                               originalRecurringTime = originalRecurringTime + datetime.timedelta(hours = TimezoneOffset)
-                               
-                               # Parse the RRULE (recurrence rule) into a dictionary
-                               RRULE = str(event['recurrence'][0])
-                               rrulef = RRULE.split(';')
-                               rruleDict = {}                                    
-                               for section in rrulef:
-                                   keyValuePair = section.split('=')
-                                   rruleDict[ keyValuePair[0] ] = keyValuePair[1]
-
-                               # Display information for weekly recurring events and update the mappings object
-                               ordinals = {'1': 'first', '2': 'second', '3': 'third', '4': 'forth', '-': 'last'}
-                               if rruleDict['RRULE:FREQ'] == 'WEEKLY':
-                                   if 'INTERVAL' not in rruleDict:
-                                       #update the mappings with the weekly event starting time, and print it to the console
-                                       recurringStartTimef = "Weekly on %s at %s" % ( originalRecurringTime.strftime("%A"), originalRecurringTime.strftime("%I:%M%p") )
-                                       entry['recurringTime'] = recurringStartTimef
-                                       print recurringStartTimef
-                                   else:
-                                       #update the mappings with the semi-weekly event starting time, and print it to the console
-                                       recurringStartTimef = "Every " + rruleDict['INTERVAL'] + " weeks on %s at %s" % ( originalRecurringTime.strftime("%A"), originalRecurringTime.strftime("%I:%M%p") )
-                                       entry['recurringTime'] = recurringStartTimef
-                                       print recurringStartTimef
-                               
-                               # Display information for monthly recurring events and update the mappings object
-                               if rruleDict['RRULE:FREQ'] == 'MONTHLY':
-                                  if len(rruleDict['BYDAY']) > 2:
-                                      #update the mappings with the monthly event starting time, and print it to the console
-                                      recurringStartTimef = "Monthly on the %s %s at %s" % (ordinals[ rruleDict['BYDAY'][0:1] ], originalStartTime.strftime("%A"), originalStartTime.strftime("%I:%M%p") )
-                                      entry['recurringTime'] = recurringStartTimef
-                                      print recurringStartTimef
-                                  else:
-                                      #update the mappings with the monthly (by day) event starting time, and print it to the console
-                                      recurringStartTimef = "Monthly on day %s at %s" % (originalStartTime.strftime("%d"), originalStartTime.strftime("%I:%M%p") )
-                                      entry['recurringTime'] = recurringStartTimef
-                                      print recurringStartTimef
-
-                                
-                           # Display information for single events and update the mappings object
+                               entry = parseRecurrenceRule(event, entry)                                
+                           # Display information for single events to the console and update the mappings object
                            if 'start' in event:
-                               for nextEvent in nextEvents['items']:
-                                   if 'summary' in nextEvent:
-                                       if nextEvent['summary'] == event['summary']:
-                                           if 'start' in nextEvent:
-                                               if 'dateTime' in nextEvent['start']:
-                                                   nextStartTime = datetime.datetime.strptime( str( nextEvent['start']['dateTime'] )[0:19], '%Y-%m-%dT%H:%M:%S' )
-                                                   
-                                                   # Correct for Timezone offsets
-                                                   nextStartTime = nextStartTime + datetime.timedelta(hours = TimezoneOffset)
-
-                                                   if nextStartTime > datetime.datetime.now():
-                                                       if nextEvent['summary'] not in eventsRead:
-                                                           nextStartTimef = nextStartTime.strftime("%A, %B %d, %Y %I:%M%p")
-                                                           print "The the next event start time is: \n", nextStartTimef
-                                                           #update the mappings with the next event starting time, and print it to the console
-                                                           entry['nextStartTime'] = nextStartTimef
-                                                           eventsRead.append(nextEvent['summary'])
-                                                           break
-                              
+                               # Get single events from this calendar. Returns the individual instances of recurring events ordered by start date
+                               nextEvents = getSingleEvents(calendarId, httpAuth)
+                               entry = parseSingleRule(nextEvents, event, entry)
                            try:
                                response = updateEvent( event, calendarId, entry['reflectorList'], httpAuth, debug )
                                #print response
