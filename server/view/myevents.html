@@ -83,8 +83,6 @@
     <script>
     $(document).ready(function() {
       $.getJSON("get-mappings.json", function(evts) {
-        <!-- TEMP -->
-        var evts = [{"title": "thing", "reflectorList": ["foo", "bar"]}];
         $.each(evts, function(i, evt) {
           $("#events")
           .append($('<a>')
@@ -160,7 +158,7 @@
               .attr("class", "row")
               .append($('<form>')
                 .attr("class", "form-inline")
-                .attr("action", "join")
+                .attr("action", "add-email")
                 .attr("method", "POST")
                 .attr("role", "form")
                 .append($('<div>')
@@ -176,13 +174,18 @@
                       .attr("class", "form-control")
                       .attr("id", "newEmail")
                       .attr("type", "email")
-                      .attr("name", "email")
+                      .attr("name", "emailAddress")
                       .attr("placeholder", "Add email")
                     )
                     .append($('<input>')
                       .attr("type", "hidden")
-                      .attr("name", "event")
+                      .attr("name", "calendarId")
                       .attr("value", evt.calendarId)
+                    )
+                    .append($('<input>')
+                      .attr("type", "hidden")
+                      .attr("name", "title")
+                      .attr("value", evt.title)
                     )
                   )
                 )
