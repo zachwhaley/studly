@@ -33,8 +33,10 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
+            <!-- 
             <li class="active"><a href="#">Events</a></li>
             <li><a href="#about">My Events</a></li>
+            -->
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#">Sign in</a></li>
@@ -69,8 +71,8 @@
         $.each(evts, function(i, evt) {
           $("#events")
           .append($('<a>')
-            .attr("href", "#")
             .attr("class", "list-group-item active")
+            .attr("href", "#")
             .append($('<h3>')
               .attr("class", "list-group-item-heading")
               .text(evt.title)
@@ -116,13 +118,13 @@
             .attr("class", "list-group-item")
             .append($('<div>')
               .attr("class", "row")
-              .append($('<div>')
-                .attr("class", "col-md-3")
-                .append($('<form>')
-                  .attr("id", evt.title)
-                  .attr("class", "form-inline")
-                  .attr("role", "form")
-                  .attr("action", "#")
+              .append($('<form>')
+                .attr("class", "form-inline")
+                .attr("action", "join")
+                .attr("method", "POST")
+                .attr("role", "form")
+                .append($('<div>')
+                  .attr("class", "col-md-3")
                   .append($('<div>')
                     .attr("class", "form-group")
                     .append($('<label>')
@@ -131,9 +133,10 @@
                       .text("Email address")
                     )
                     .append($('<input>')
-                      .attr("type", "email")
                       .attr("class", "form-control")
                       .attr("id", "newEmail")
+                      .attr("type", "email")
+                      .attr("name", "email")
                       .attr("placeholder", "Enter email")
                     )
                     .append($('<input>')
@@ -143,14 +146,13 @@
                     )
                   )
                 )
-              )
-              .append($('<div>')
-                .attr("class", "col-md-6")
-                .append($('<button>')
-                  .attr("type", "submit")
-                  .attr("for", "join")
-                  .attr("class", "btn btn-default")
-                  .text("Join")
+                .append($('<div>')
+                  .attr("class", "col-md-6")
+                  .append($('<button>')
+                    .attr("class", "btn btn-default")
+                    .attr("type", "submit")
+                    .text("Join")
+                  )
                 )
               )
             )

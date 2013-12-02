@@ -19,7 +19,10 @@ class GetMappings(webapp2.RequestHandler):
 
 class EventManager(webapp2.RequestHandler):
     def post(self):
-        self.redirect('/groups')
+        email = self.request.get('email')
+        self.response.out.write(email)
+        event = self.request.get('event')
+        self.response.out.write(event)
 
 app = webapp2.WSGIApplication([
     ('/mappings.json', GetMappings),
