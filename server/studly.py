@@ -68,6 +68,7 @@ class RemoveEmail(webapp2.RequestHandler):
 class GetMappings(webapp2.RequestHandler):
     def get(self):
         # Sweet one-liner.
+        self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps([m.to_dict() for m in Mapping.query().fetch()]))
 
 
@@ -81,6 +82,7 @@ class GetCalendarList(webapp2.RequestHandler):
         calendarId = "trevor.latson@gmail.com"
 
         calendar_list = calendarListUpdate.getCalendarList(calendarId, http)
+        self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(calendar_list))
 
 
@@ -115,6 +117,8 @@ class JoinEvent(webapp2.RequestHandler):
             # Call UpdateCalendarList with the updated mapping object
             # Store the updated mapping object in the datastore
             [mp.put() for mp in calendarListUpdate.updateCalendarList([mapping], self.request.get('calendarId'), http)]
+            self.response.headers['Content-Type'] = 'application/json'
+            self.response.out.write(json.dumps(mapping.to_dict()))
         self.redirect('/')
 
 
