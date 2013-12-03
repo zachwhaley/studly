@@ -187,17 +187,14 @@ class JoinEvent(webapp2.RequestHandler):
         http = decorator.http()
         
         # Retrieve the mapping with the title specified
-        mapping = Mappings.query(Mappings.title == self.request.get('title')).fetch()
+        mappings = Mappings.query(Mappings.title == self.request.get('title')).fetch()
         # Iterate through each mapping object that matches the specified event title (usually just one)
-        maps = []
-        for map in mapping:
+        for mapping in mappings:
             # Append the specified emailAddress to the mapping object
-            map.reflectorList.append(self.request.get('emailAddress'))
-            # Store the updated mapping object in the datastore
-            map.put()
-            maps.append(map.to_dict())
+            mapping.reflectorList.append(self.request.get('emailAddress'))
             # Call UpdateCalendarList with the updated mapping object
-            response = calendarListUpdate.updateCalendarList(maps, self.request.get('calendarId'), http)
+            # Store the updated mapping object in the datastore
+            [mp.put() for mp in calendarListUpdate.updateCalendarList([mapping], self.request.get('calendarId'), http)]
         self.redirect('/')
 
 class RemoveEvent(webapp2.RequestHandler):
