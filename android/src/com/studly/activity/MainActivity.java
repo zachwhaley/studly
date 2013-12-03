@@ -53,7 +53,6 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
 
     private SpiceManager mSpiceManager = new SpiceManager(StudlyService.class);
     private String mAccountName;
-    private RequestStudlyGroups mRequestStudlyGroups;
     private StudlyAdapter mStudlyAdapter;
 
     private boolean mConnected = false;
@@ -76,7 +75,9 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
     }
 
     private void performRequest() {
-        mSpiceManager.execute(mRequestStudlyGroups, new StudlyMappingRequestListener());
+        final Location loc = getLocation();
+        RequestStudlyGroups request = new RequestStudlyGroups(loc.getLatitude(), loc.getLongitude());
+        mSpiceManager.execute(request, new StudlyMappingRequestListener());
     }
 
     @Override
@@ -99,7 +100,6 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
          */
         mLocationClient = new LocationClient(this, this, this);
 
-        mRequestStudlyGroups = new RequestStudlyGroups();
         try {
             Log.d(TAG, "Setting list adapter");
             performRequest();
@@ -128,8 +128,6 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        Location loc = getLocation();
-        Toast.makeText(this, "Lat " + loc.getLatitude() + " Lon " + loc.getLongitude(), Toast.LENGTH_LONG).show();
     }
 
     @Override
