@@ -195,10 +195,10 @@ def updateCalendarList(mapping, calendarId, httpAuth, TimezoneOffset = 0, debug 
                             # Store the event location to the mappings object
                             if 'location' in event:
                                 mapping.location = event['location']
-                                   # Store the event latitude and longitude to the mappings object
-                                   latlng = entry.location.split(',')
-                                   entry.latitude = float(latlng[0])
-                                   entry.longitude = float(latlng[1])
+                                # Store the event latitude and longitude to the mappings object
+                                latlng = mapping.location.split(',')
+                                mapping.latitude = float(latlng[0])
+                                mapping.longitude = float(latlng[1])
                             # Display information for recurring event information to the console and store it to the mappings object
                             if 'recurrence' in event:
                                 mapping = parseRecurrenceRule(event, mapping)
