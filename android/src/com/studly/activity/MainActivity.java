@@ -209,18 +209,22 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
                 @Override
                 public int compare(StudlyMapping lhs, StudlyMapping rhs) {
                     final Location loc = MainActivity.this.getLocation();
-                    
+
                     Location lhsLoc = new Location("");
                     lhsLoc.setLatitude(lhs.getLatitude());
                     lhsLoc.setLongitude(lhs.getLongitude());
-                    
+                    Log.d(TAG, "lhs lat " + lhsLoc.getLatitude() + " lon " + lhsLoc.getLongitude());
+
                     Location rhsLoc = new Location("");
                     rhsLoc.setLatitude(rhs.getLatitude());
                     rhsLoc.setLongitude(rhs.getLongitude());
-                    
+                    Log.d(TAG, "rhs lat " + rhsLoc.getLatitude() + " lon " + rhsLoc.getLongitude());
+
                     float rhsDist = loc.distanceTo(rhsLoc);
                     float lhsDist = loc.distanceTo(lhsLoc);
-                    
+
+                    Log.d(TAG, "rhs dist " + rhsDist + " lhs dist " + lhsDist);
+
                     return (int) (rhsDist - lhsDist);
                 }
             });
