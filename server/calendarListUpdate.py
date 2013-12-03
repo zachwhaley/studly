@@ -81,13 +81,13 @@ def parseRecurrenceRule(event, entry, TimezoneOffset = 0):
         if 'INTERVAL' not in rruleDict:
             #update the mappings with the weekly event starting time, and print it to the console
             recurringStartTimef = "Weekly on %s at %s" % ( originalRecurringTime.strftime("%A"), originalRecurringTime.strftime("%I:%M%p") )
-            entry.recurringTime = recurringStartTimef
+            entry.recurringStartTime = recurringStartTimef
             print recurringStartTimef
             return entry
         else:
             #update the mappings with the semi-weekly event starting time, and print it to the console
             recurringStartTimef = "Every " + rruleDict['INTERVAL'] + " weeks on %s at %s" % ( originalRecurringTime.strftime("%A"), originalRecurringTime.strftime("%I:%M%p") )
-            entry.recurringTime = recurringStartTimef
+            entry.recurringStartTime = recurringStartTimef
             print recurringStartTimef
             return entry
 
@@ -96,13 +96,13 @@ def parseRecurrenceRule(event, entry, TimezoneOffset = 0):
        if len(rruleDict['BYDAY']) > 2:
            #update the mappings with the monthly event starting time, and print it to the console
            recurringStartTimef = "Monthly on the %s %s at %s" % (ordinals[ rruleDict['BYDAY'][0:1] ], originalStartTime.strftime("%A"), originalStartTime.strftime("%I:%M%p") )
-           entry.recurringTime = recurringStartTimef
+           entry.recurringStartTime = recurringStartTimef
            print recurringStartTimef
            return entry
        else:
            #update the mappings with the monthly (by day) event starting time, and print it to the console
            recurringStartTimef = "Monthly on day %s at %s" % (originalStartTime.strftime("%d"), originalStartTime.strftime("%I:%M%p") )
-           entry.recurringTime = recurringStartTimef
+           entry.recurringStartTime = recurringStartTimef
            print recurringStartTimef
            return entry
 
@@ -195,6 +195,10 @@ def updateCalendarList(mapping, calendarId, httpAuth, TimezoneOffset = 0, debug 
                             # Store the event location to the mappings object
                             if 'location' in event:
                                 mapping.location = event['location']
+                                   # Store the event latitude and longitude to the mappings object
+                                   latlng = entry.location.split(',')
+                                   entry.latitude = float(latlng[0])
+                                   entry.longitude = float(latlng[1])
                             # Display information for recurring event information to the console and store it to the mappings object
                             if 'recurrence' in event:
                                 mapping = parseRecurrenceRule(event, mapping)

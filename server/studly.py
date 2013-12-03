@@ -23,6 +23,8 @@ class Mapping(ndb.Model):
     nextStartTime = ndb.StringProperty()
     recurringStartTime = ndb.StringProperty()
     location = ndb.StringProperty()
+    latitude = ndb.FloatProperty()
+    longitude = ndb.FloatProperty()
 
 
 class AddEmail(webapp2.RequestHandler):
@@ -68,8 +70,8 @@ class GetMappings(webapp2.RequestHandler):
         # Sweet one-liner.
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps([m.to_dict() for m in Mapping.query().fetch()]))
-
-
+        
+                   
 class GetCalendarList(webapp2.RequestHandler):
     @decorator.oauth_required
     def get(self):
