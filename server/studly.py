@@ -36,17 +36,14 @@ class AddEmail(webapp2.RequestHandler):
         http = decorator.http()
         
         # Retrieve the mapping with the title specified
-        mapping = Mappings.query(Mappings.title == self.request.get('title')).fetch()
+        mappings = Mappings.query(Mappings.title == self.request.get('title')).fetch()
         # Iterate through each mapping object that matches the specified event title (usually just one)
-        maps = []
-        for map in mapping:
+        for mapping in mappings:
             # Append the specified emailAddress to the mapping object
-            map.reflectorList.append(self.request.get('emailAddress'))
-            # Store the updated mapping object in the datastore
-            map.put()
-            maps.append(map.to_dict())
+            mapping.reflectorList.append(self.request.get('emailAddress'))
             # Call UpdateCalendarList with the updated mapping object
-            response = calendarListUpdate.updateCalendarList(maps, self.request.get('calendarId'), http)
+            # And store the updated mapping object in the datastore
+            [mp.put() for mp in calendarListUpdate.updateCalendarList([mapping], self.request.get('calendarId'), http)]
         self.redirect('/myevents')
 
 class RemoveEmail(webapp2.RequestHandler):
@@ -60,15 +57,12 @@ class RemoveEmail(webapp2.RequestHandler):
         # Retrieve the mapping with the title specified
         mappings = Mappings.query(Mappings.title == self.request.get('title')).fetch()
         # Iterate through each mapping object that matches the specified event title (usually just one)
-        maps = []
         for mapping in mappings:
             # Append the specified emailAddress to the mapping object
             mapping.reflectorList.remove(self.request.get('emailAddress'))
-            # Store the updated mapping object in the datastore
-            mapping.put()
-            maps.append(mapping.to_dict())
             # Call UpdateCalendarList with the updated mapping object
-            calendarListUpdate.updateCalendarList(maps, self.request.get('calendarId'), http)
+            # And store the updated mapping object in the datastore
+            [mp.put() for mp in calendarListUpdate.updateCalendarList([mapping], self.request.get('calendarId'), http)]
         self.redirect('/myevents')
     
 class GetMappings(webapp2.RequestHandler):
@@ -174,8 +168,7 @@ class ImportEvent(webapp2.RequestHandler):
         mapping = Mappings()
         mapping.title = self.request.get('title')
         mapping.calendarId = self.request.get('calendarId')
-        mapping.put()
-        calendarListUpdate.updateCalendarList([mapping], mapping.calendarId, http)
+        [mp.put() for mp in calendarListUpdate.updateCalendarList([mapping], mapping.calendarId, http)]
         self.redirect('/myevents')
 
 class JoinEvent(webapp2.RequestHandler):
