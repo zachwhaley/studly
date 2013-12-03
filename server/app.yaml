@@ -14,8 +14,6 @@ handlers:
 
 - url: /calsync
   static_dir: calsync
-- url: /view
-  static_dir: view
 - url: /css
   static_dir: view/css
 - url: /fonts

@@ -3,7 +3,6 @@ import webapp2
 import calendarListUpdate
 import os
 
-from google.appengine.api import users
 from google.appengine.ext import ndb
 from apiclient.discovery import build
 from google.appengine.ext import webapp
