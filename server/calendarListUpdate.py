@@ -81,13 +81,13 @@ def parseRecurrenceRule(event, entry, TimezoneOffset = 0):
         if 'INTERVAL' not in rruleDict:
             #update the mappings with the weekly event starting time, and print it to the console
             recurringStartTimef = "Weekly on %s at %s" % ( originalRecurringTime.strftime("%A"), originalRecurringTime.strftime("%I:%M%p") )
-            entry['recurringTime'] = recurringStartTimef
+            entry.recurringTime = recurringStartTimef
             print recurringStartTimef
             return entry
         else:
             #update the mappings with the semi-weekly event starting time, and print it to the console
             recurringStartTimef = "Every " + rruleDict['INTERVAL'] + " weeks on %s at %s" % ( originalRecurringTime.strftime("%A"), originalRecurringTime.strftime("%I:%M%p") )
-            entry['recurringTime'] = recurringStartTimef
+            entry.recurringTime = recurringStartTimef
             print recurringStartTimef
             return entry
    
@@ -96,13 +96,13 @@ def parseRecurrenceRule(event, entry, TimezoneOffset = 0):
        if len(rruleDict['BYDAY']) > 2:
            #update the mappings with the monthly event starting time, and print it to the console
            recurringStartTimef = "Monthly on the %s %s at %s" % (ordinals[ rruleDict['BYDAY'][0:1] ], originalStartTime.strftime("%A"), originalStartTime.strftime("%I:%M%p") )
-           entry['recurringTime'] = recurringStartTimef
+           entry.recurringTime = recurringStartTimef
            print recurringStartTimef
            return entry
        else:
            #update the mappings with the monthly (by day) event starting time, and print it to the console
            recurringStartTimef = "Monthly on day %s at %s" % (originalStartTime.strftime("%d"), originalStartTime.strftime("%I:%M%p") )
-           entry['recurringTime'] = recurringStartTimef
+           entry.recurringTime = recurringStartTimef
            print recurringStartTimef
            return entry
 
@@ -121,7 +121,7 @@ def parseSingleRule(nextEvents, event, entry, TimezoneOffset = 0):
                                 nextStartTimef = nextStartTime.strftime("%A, %B %d, %Y %I:%M%p")
                                 print "The the next event start time is: \n", nextStartTimef
                                 #update the mappings with the next event starting time, and print it to the console
-                                entry['nextStartTime'] = nextStartTimef
+                                entry.nextStartTime = nextStartTimef
                                 eventsRead.append(nextEvent['summary'])
                                 break
     return entry
@@ -150,7 +150,7 @@ def updateEvent(event, calendarId, reflectorList, httpAuth, debug = False):
             update = True
 
     for attendeeRemoval in attendeeRemovals:
-            event['attendees'].remove(attendeeRemoval)
+        event['attendees'].remove(attendeeRemoval)
     
     for oneReflectorEmail in reflectorList:
         # add attendees if ther email address IS on the reflector list but not on the attendee list
@@ -176,38 +176,36 @@ def updateCalendarList(mappings, calendarId, httpAuth, TimezoneOffset = 0, debug
 
     # Iterate through all calendars
     for calendar in calendar_list['items']:
-      if calendar['id'] == calendarId:
-        print "Searching events in calendar: " + calendar['id']
-        # Get events from this calendar. Returns single entries for recurring events, and not individual instances
-        events = getEvents(calendarId, httpAuth)
-
-        
-        for event in events['items']:
-            # Iterate through each entry in the mappings
-            for entry in mappings:
-                # If the event title is found in the mappings, output event info to the console, 
-                # then call updateEvent with event name and reflectorList
-                if 'summary' in event:
-                    if event['summary'] == entry['title']:
-                       if event['organizer']['email'] == calendar['id']:
-                           print "\nExamining the event: " , event['summary']
-                           # Make the event public
-                           event['visibility'] = "public"
-                           # Store the event location to the mappings object
-                           if 'location' in event:
-                               entry['location'] = event['location']
-                           # Display information for recurring event information to the console and store it to the mappings object
-                           if 'recurrence' in event:
-                               entry = parseRecurrenceRule(event, entry)                                
-                           # Display information for single events to the console and update the mappings object
-                           if 'start' in event:
-                               # Get single events from this calendar. Returns the individual instances of recurring events ordered by start date
-                               nextEvents = getSingleEvents(calendarId, httpAuth)
-                               entry = parseSingleRule(nextEvents, event, entry)
-                           try:
-                               response = updateEvent( event, calendarId, entry['reflectorList'], httpAuth, debug )
-                               #print response
-                           except KeyboardInterrupt:
-                               print 'Update canceled. Moving to next event.'
+        if calendar['id'] == calendarId:
+            print "Searching events in calendar: " + calendar['id']
+            # Get events from this calendar. Returns single entries for recurring events, and not individual instances
+            events = getEvents(calendarId, httpAuth)
+            for event in events['items']:
+                # Iterate through each entry in the mappings
+                for entry in mappings:
+                    # If the event title is found in the mappings, output event info to the console, 
+                    # then call updateEvent with event name and reflectorList
+                    if 'summary' in event:
+                        if event['summary'] == entry.title:
+                           if event['organizer']['email'] == calendar['id']:
+                               print "\nExamining the event: " , event['summary']
+                               # Make the event public
+                               event['visibility'] = "public"
+                               # Store the event location to the mappings object
+                               if 'location' in event:
+                                   entry.location = event['location']
+                               # Display information for recurring event information to the console and store it to the mappings object
+                               if 'recurrence' in event:
+                                   entry = parseRecurrenceRule(event, entry)                                
+                               # Display information for single events to the console and update the mappings object
+                               if 'start' in event:
+                                   # Get single events from this calendar. Returns the individual instances of recurring events ordered by start date
+                                   nextEvents = getSingleEvents(calendarId, httpAuth)
+                                   entry = parseSingleRule(nextEvents, event, entry)
+                               try:
+                                   response = updateEvent(event, calendarId, entry.reflectorList, httpAuth, debug)
+                                   #print response
+                               except KeyboardInterrupt:
+                                   print 'Update canceled. Moving to next event.'
+                                   return mappings
                                return mappings
-                           return mappings
