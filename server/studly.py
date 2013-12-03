@@ -69,8 +69,8 @@ class RemoveEmail(webapp2.RequestHandler):
 
 class GetMappings(webapp2.RequestHandler):
     def get(self):
-        self.response.headers['Content-Type'] = 'application/json'
         # Sweet one-liner.
+        self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps([m.to_dict() for m in Mapping.query().fetch()]))
         
                    
