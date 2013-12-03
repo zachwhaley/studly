@@ -8,13 +8,12 @@ handlers:
 - url: /
   static_files: view/events.html
   upload: view/events.html
-- url: /me
+- url: /myevents
   static_files: view/myevents.html
   upload: view/myevents.html
 
 - url: /calsync
   static_dir: calsync
-
 - url: /css
   static_dir: view/css
 - url: /fonts

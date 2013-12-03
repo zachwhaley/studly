@@ -147,6 +147,20 @@ class UpdateCalendarList(webapp2.RequestHandler):
         response = calendarListUpdate.updateCalendarList(mappings, calendarId, http)
         self.response.out.write(response)
 
+class ImportEvent(webapp2.RequestHandler):
+    def get(self):
+        self.redirect('/myevents')
+    @decorator.oauth_required
+    def post(self):
+        # Get the authorized Http object created by the decorator.
+        http = decorator.http()
+        mapping = Mappings()
+        mapping.title = self.request.get('title')
+        mapping.calendarId = self.request.get('calendarId')
+        mapping.put()
+        calendarListUpdate.updateCalendarList([mapping], mapping.calendarId, http)
+        self.redirect('/myevents')
+
 app = webapp2.WSGIApplication([
     ('/get-mappings.json', GetMappings),
     ('/set-mappings.json', SetMappings),
@@ -156,5 +170,6 @@ app = webapp2.WSGIApplication([
     ('/single-events.json', GetSingleEvents),
     ('/add-email', AddEmail),
     ('/update-calendar', UpdateCalendarList),
+    ('/import-event', ImportEvent),
     (decorator.callback_path, decorator.callback_handler()),
 ], debug=True)

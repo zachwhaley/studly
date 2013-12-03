@@ -33,7 +33,7 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="/">All Events</a></li>
-            <li><a href="me">My Events</a></li>
+            <li><a href="myevents">My Events</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li>
@@ -60,8 +60,6 @@
     <script>
     $(document).ready(function() {
       $.getJSON("get-mappings.json", function(evts) {
-        <!-- TEMP -->
-        var evts = [{"title": "thing", "reflectorList": ["foo", "bar"]}];
         $.each(evts, function(i, evt) {
           $("#events")
           .append($('<a>')
