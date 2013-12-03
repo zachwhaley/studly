@@ -13,8 +13,8 @@ public interface StudlyApi {
     StudlyMapping.List getMappings();
 
     @FormUrlEncoded
-    @POST("/add-email")
-    String joinGroup(@Field("title") String title,
-                     @Field("emailAddress") String email,
-                     @Field("calendarId") String calendarId);
+    @POST("/join-event")
+    StudlyMapping joinGroup(@Field("title") String title,
+                            @Field("calendarId") String calendarId,
+                            @Field("emailAddress") String email);
 }
