@@ -21,6 +21,7 @@ service = build('calendar', 'v3')
 
 class Mappings(ndb.Model):
     title = ndb.StringProperty()
+    htmlLink = ndb.StringProperty()
     reflectorList = ndb.StringProperty(repeated=True)
     calendarId = ndb.StringProperty()
     nextStartTime = ndb.StringProperty()

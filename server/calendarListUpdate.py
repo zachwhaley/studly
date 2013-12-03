@@ -191,6 +191,9 @@ def updateCalendarList(mappings, calendarId, httpAuth, TimezoneOffset = 0, debug
                                print "\nExamining the event: " , event['summary']
                                # Make the event public
                                event['visibility'] = "public"
+                               # Store the event link
+                               if 'htmlLink' in event:
+                                   entry.htmlLink = event['htmlLink']
                                # Store the event location to the mappings object
                                if 'location' in event:
                                    entry.location = event['location']
