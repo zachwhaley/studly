@@ -9,10 +9,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +23,6 @@ import com.studly.fragment.ChooseAccountFragment.ChooseAccountListener;
 import com.studly.fragment.ChooseGroupFragment;
 import com.studly.fragment.ChooseGroupFragment.ChooseGroupListener;
 import com.studly.model.StudlyMapping;
-import com.studly.network.RequestJoinGroup;
 import com.studly.network.RequestStudlyGroups;
 import com.studly.service.StudlyService;
 import com.studly.util.AccountUtils;
@@ -133,39 +130,16 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
         public View getView(int position, View convertView, ViewGroup parent) {
             Log.d(TAG, "Create new view");
             LayoutInflater inflater = getLayoutInflater();
-            View view = inflater.inflate(R.layout.studly_list_item, null);
+            View view = inflater.inflate(android.R.layout.simple_list_item_1, null);
 
             final StudlyMapping mapping = getItem(position);
             if (mapping != null) {
                 Log.d(TAG, "creating row for event " + mapping.getTitle() + " calendar " + mapping.getCalendarId());
 
-                TextView textView = (TextView) view.findViewById(R.id.row_event);
+                TextView textView = (TextView) view.findViewById(android.R.id.text1);
                 textView.setText(mapping.getTitle());
-
-                Button join = (Button) view.findViewById(R.id.button_join);
-                join.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        RequestJoinGroup request = new RequestJoinGroup(mapping, AccountUtils
-                                .getChosenAccountName(MainActivity.this));
-                        mSpiceManager.execute(request, new StudlyJoinRequestListener());
-                    }
-                });
             }
             return view;
-        }
-
-    }
-
-    private class StudlyJoinRequestListener implements RequestListener<StudlyMapping> {
-
-        @Override
-        public void onRequestFailure(SpiceException spiceException) {
-        }
-
-        @Override
-        public void onRequestSuccess(StudlyMapping mapping) {
-            performRequest();
         }
 
     }

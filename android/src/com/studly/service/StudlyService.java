@@ -5,7 +5,7 @@ import com.studly.network.StudlyApi;
 
 public class StudlyService extends RetrofitGsonSpiceService {
 
-    public static final String BASE_URL = "http://studly-manager.appspot.com";
+    private static final String BASE_URL = "http://studly-manager.appspot.com";
 
     @Override
     protected String getServerUrl() {
