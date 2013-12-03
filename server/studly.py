@@ -80,7 +80,7 @@ class GetMappings(webapp2.RequestHandler):
         for mapping in mappings:
             # Add the latitude and longitude to the mappings object
             mapping.latitude = float(self.request.get('latitude'))
-            maping.longitude = float(self.request.get('longitude'))
+            mapping.longitude = float(self.request.get('longitude'))
             
                    
 class GetCalendarList(webapp2.RequestHandler):
