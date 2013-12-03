@@ -3,6 +3,7 @@ import webapp2
 import calendarListUpdate
 import os
 
+from google.appengine.api import users
 from google.appengine.ext import ndb
 from apiclient.discovery import build
 from google.appengine.ext import webapp
@@ -155,7 +156,16 @@ class ImportEvent(webapp2.RequestHandler):
         mapping.put()
         self.redirect('/me')
 
+class SignIn(webapp2.RequestHandler):
+    def get(self):
+        if not users.get_current_user():
+            auth_url = users.create_login_url('/myevents')
+            self.redirect(auth_url)
+        else:
+            self.redirect('/myevents')
+
 app = webapp2.WSGIApplication([
+    ('/me', SignIn),
     ('/get-mappings.json', GetMappings),
     ('/set-mappings.json', SetMappings),
     ('/calendars.json', GetCalendarList),
