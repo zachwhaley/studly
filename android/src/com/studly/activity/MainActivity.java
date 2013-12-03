@@ -24,7 +24,7 @@ import com.studly.fragment.ChooseAccountFragment;
 import com.studly.fragment.ChooseAccountFragment.ChooseAccountListener;
 import com.studly.fragment.ChooseGroupFragment;
 import com.studly.fragment.ChooseGroupFragment.ChooseGroupListener;
-import com.studly.model.StudlyGroup;
+import com.studly.model.StudlyMapping;
 import com.studly.network.RequestStudlyGroups;
 import com.studly.service.StudlyService;
 import com.studly.util.AccountUtils;
@@ -119,12 +119,12 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
     public void onGroupChosen(long calId) {
         Toast.makeText(this, "Event title " + calId, Toast.LENGTH_SHORT).show();
     }
-    
+
     /* Classes */
 
-    private class StudlyAdapter extends ArrayAdapter<StudlyGroup> {
+    private class StudlyAdapter extends ArrayAdapter<StudlyMapping> {
 
-        public StudlyAdapter(Context context, StudlyGroup.List events) {
+        public StudlyAdapter(Context context, StudlyMapping.List events) {
             super(context, 0, events);
         }
 
@@ -134,15 +134,15 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
             LayoutInflater inflater = getLayoutInflater();
             View view = inflater.inflate(R.layout.studly_list_item, null);
 
-            StudlyGroup group = getItem(position);
+            StudlyMapping group = getItem(position);
             if (group != null) {
-                Log.d(TAG, "creating row for event " + group.getName());
+                Log.d(TAG, "creating row for event " + group.getTitle());
 
                 TextView textView = (TextView) view.findViewById(R.id.row_event);
-                textView.setText(group.getName());
+                textView.setText(group.getTitle());
 
                 Button join = (Button) view.findViewById(R.id.button_join);
-                join.setText(group.isJoined() ? "Join" : "Leave");
+                join.setText(R.string.join);
                 join.setOnClickListener(new JoinClickListener(group));
             }
             return view;
@@ -152,33 +152,29 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
 
     private class JoinClickListener implements OnClickListener {
 
-        private StudlyGroup group;
+        private StudlyMapping group;
 
-        public JoinClickListener(StudlyGroup event) {
+        public JoinClickListener(StudlyMapping event) {
             this.group = event;
         }
 
         @Override
         public void onClick(View v) {
-            if (group.isJoined()) {
-                Toast.makeText(MainActivity.this, "Joining " + group.getName(), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(MainActivity.this, "Leaving " + group.getName(), Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(MainActivity.this, "Joining " + group.getTitle(), Toast.LENGTH_SHORT).show();
             // mSpiceManager.execute(request, requestListener);
             performRequest();
         }
 
     }
 
-    private class StudlyGroupRequestListener implements RequestListener<StudlyGroup.List> {
+    private class StudlyGroupRequestListener implements RequestListener<StudlyMapping.List> {
 
         @Override
         public void onRequestFailure(SpiceException spiceException) {
         }
 
         @Override
-        public void onRequestSuccess(StudlyGroup.List groups) {
+        public void onRequestSuccess(StudlyMapping.List groups) {
             mStudlyAdapter = new StudlyAdapter(MainActivity.this, groups);
             MainActivity.this.setListAdapter(mStudlyAdapter);
         }
