@@ -5,16 +5,16 @@ import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.POST;
 
-import com.studly.model.StudlyGroup;
+import com.studly.model.StudlyMapping;
 
 public interface StudlyApi {
 
-    @GET("/groups")
-    StudlyGroup.List getGroups();
+    @GET("/get-mappings.json")
+    StudlyMapping.List getMappings();
 
     @FormUrlEncoded
-    @POST("/todo")
-    String joinGroup(@Field("event") String event,
-                     @Field("email") String email,
-                     @Field("join") String join);
+    @POST("/add-email")
+    String joinGroup(@Field("title") String title,
+                     @Field("emailAddress") String email,
+                     @Field("calendarId") String calendarId);
 }

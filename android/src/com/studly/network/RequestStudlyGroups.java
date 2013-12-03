@@ -1,17 +1,17 @@
 package com.studly.network;
 
 import com.octo.android.robospice.request.retrofit.RetrofitSpiceRequest;
-import com.studly.model.StudlyGroup;
+import com.studly.model.StudlyMapping;
 
-public class RequestStudlyGroups extends RetrofitSpiceRequest<StudlyGroup.List, StudlyApi> {
+public class RequestStudlyGroups extends RetrofitSpiceRequest<StudlyMapping.List, StudlyApi> {
 
     public RequestStudlyGroups() {
-        super(StudlyGroup.List.class, StudlyApi.class);
+        super(StudlyMapping.List.class, StudlyApi.class);
     }
 
     @Override
-    public StudlyGroup.List loadDataFromNetwork() throws Exception {
-        return getService().getGroups();
+    public StudlyMapping.List loadDataFromNetwork() throws Exception {
+        return getService().getMappings();
     }
 
 }
