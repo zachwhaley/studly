@@ -178,6 +178,18 @@ class ImportEvent(webapp2.RequestHandler):
         calendarListUpdate.updateCalendarList([mapping], mapping.calendarId, http)
         self.redirect('/myevents')
 
+class RemoveEvent(webapp2.RequestHandler):
+    def get(self):
+        self.redirect('/myevents')
+    def post(self):
+        # Retrieve the mapping with the title specified
+        mappings = Mappings.query(Mappings.title == self.request.get('title')).fetch()
+        # Iterate through each mapping object that matches the specified event title (usually just one)
+        for mapping in mappings:
+            # Remove the mapping from the datastore
+            mapping.key.delete()
+        self.redirect('/myevents')
+    
 app = webapp2.WSGIApplication([
     ('/get-mappings.json', GetMappings),
     ('/set-mappings.json', SetMappings),
@@ -189,5 +201,6 @@ app = webapp2.WSGIApplication([
     ('/remove-email', RemoveEmail),
     ('/update-calendar', UpdateCalendarList),
     ('/import-event', ImportEvent),
+    ('/remove-event', RemoveEvent),
     (decorator.callback_path, decorator.callback_handler()),
 ], debug=True)
