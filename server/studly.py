@@ -178,6 +178,25 @@ class ImportEvent(webapp2.RequestHandler):
         calendarListUpdate.updateCalendarList([mapping], mapping.calendarId, http)
         self.redirect('/myevents')
 
+class JoinEvent(webapp2.RequestHandler):
+    def get(self):
+        self.redirect('/')
+    @decorator.oauth_required
+    def post(self):
+        # Get the authorized Http object created by the decorator.
+        http = decorator.http()
+        
+        # Retrieve the mapping with the title specified
+        mappings = Mappings.query(Mappings.title == self.request.get('title')).fetch()
+        # Iterate through each mapping object that matches the specified event title (usually just one)
+        for mapping in mappings:
+            # Append the specified emailAddress to the mapping object
+            mapping.reflectorList.append(self.request.get('emailAddress'))
+            # Call UpdateCalendarList with the updated mapping object
+            # Store the updated mapping object in the datastore
+            [mp.put() for mp in calendarListUpdate.updateCalendarList([mapping], self.request.get('calendarId'), http)]
+        self.redirect('/')
+
 class RemoveEvent(webapp2.RequestHandler):
     def get(self):
         self.redirect('/myevents')
@@ -201,6 +220,7 @@ app = webapp2.WSGIApplication([
     ('/remove-email', RemoveEmail),
     ('/update-calendar', UpdateCalendarList),
     ('/import-event', ImportEvent),
+    ('/join-event', JoinEvent),
     ('/remove-event', RemoveEvent),
     (decorator.callback_path, decorator.callback_handler()),
 ], debug=True)
