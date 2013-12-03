@@ -63,14 +63,14 @@ def getSingleEvents(calendarId, httpAuth):
 def parseRecurrenceRule(event, entry, TimezoneOffset = 0):
     print "The event recurs: "
     originalRecurringTime = datetime.datetime.strptime( str( event['start']['dateTime'] )[0:19], '%Y-%m-%dT%H:%M:%S' )
-   
+
     # Correct for Timezone offsets
     originalRecurringTime = originalRecurringTime + datetime.timedelta(hours = TimezoneOffset)
-   
+
     # Parse the RRULE (recurrence rule) into a dictionary
     RRULE = str(event['recurrence'][0])
     rrulef = RRULE.split(';')
-    rruleDict = {}                                    
+    rruleDict = {}
     for section in rrulef:
         keyValuePair = section.split('=')
         rruleDict[ keyValuePair[0] ] = keyValuePair[1]
@@ -90,7 +90,7 @@ def parseRecurrenceRule(event, entry, TimezoneOffset = 0):
             entry.recurringTime = recurringStartTimef
             print recurringStartTimef
             return entry
-   
+
     # Display information for monthly recurring events and update the mappings object
     if rruleDict['RRULE:FREQ'] == 'MONTHLY':
        if len(rruleDict['BYDAY']) > 2:
@@ -138,7 +138,7 @@ def updateEvent(event, calendarId, reflectorList, httpAuth, debug = False):
     # Initialize an empty attendee list if one does not exist
     if 'attendees' not in event:
         event['attendees'] = []
-        
+
     print "Checking attendee list of event: ",  event['summary']
     for attendee in event['attendees']:
 #         eventEmails.append(str(attendee['email'].lower()))
@@ -151,7 +151,7 @@ def updateEvent(event, calendarId, reflectorList, httpAuth, debug = False):
 
     for attendeeRemoval in attendeeRemovals:
         event['attendees'].remove(attendeeRemoval)
-    
+
     for oneReflectorEmail in reflectorList:
         # add attendees if ther email address IS on the reflector list but not on the attendee list
         if oneReflectorEmail not in event['attendees']:
@@ -159,7 +159,7 @@ def updateEvent(event, calendarId, reflectorList, httpAuth, debug = False):
             event['attendees'].append( dict( email = oneReflectorEmail, responseStatus = 'needsAction' ) )
             update = True
 
-    if update: 
+    if update:
         if debug == False:
             request = service.events().update(calendarId=calendarId, eventId=event['id'], body=event, sendNotifications = True)
             response = request.execute(http=httpAuth)
@@ -167,7 +167,7 @@ def updateEvent(event, calendarId, reflectorList, httpAuth, debug = False):
 
 
 
-def updateCalendarList(mappings, calendarId, httpAuth, TimezoneOffset = 0, debug = False):
+def updateCalendarList(mapping, calendarId, httpAuth, TimezoneOffset = 0, debug = False):
     print "The current time is: " , datetime.datetime.now()
     # Set a condition code for update failure (ie calendar usage limits exceed)
     updateFail = False
@@ -181,34 +181,32 @@ def updateCalendarList(mappings, calendarId, httpAuth, TimezoneOffset = 0, debug
             # Get events from this calendar. Returns single entries for recurring events, and not individual instances
             events = getEvents(calendarId, httpAuth)
             for event in events['items']:
-                # Iterate through each entry in the mappings
-                for entry in mappings:
-                    # If the event title is found in the mappings, output event info to the console, 
-                    # then call updateEvent with event name and reflectorList
-                    if 'summary' in event:
-                        if event['summary'] == entry.title:
-                           if event['organizer']['email'] == calendar['id']:
-                               print "\nExamining the event: " , event['summary']
-                               # Make the event public
-                               event['visibility'] = "public"
-                               # Store the event link
-                               if 'htmlLink' in event:
-                                   entry.htmlLink = event['htmlLink']
-                               # Store the event location to the mappings object
-                               if 'location' in event:
-                                   entry.location = event['location']
-                               # Display information for recurring event information to the console and store it to the mappings object
-                               if 'recurrence' in event:
-                                   entry = parseRecurrenceRule(event, entry)                                
-                               # Display information for single events to the console and update the mappings object
-                               if 'start' in event:
-                                   # Get single events from this calendar. Returns the individual instances of recurring events ordered by start date
-                                   nextEvents = getSingleEvents(calendarId, httpAuth)
-                                   entry = parseSingleRule(nextEvents, event, entry)
-                               try:
-                                   response = updateEvent(event, calendarId, entry.reflectorList, httpAuth, debug)
-                                   #print response
-                               except KeyboardInterrupt:
-                                   print 'Update canceled. Moving to next event.'
-                                   return mappings
-                               return mappings
+                # If the event title is found in the mappings, output event info to the console,
+                # then call updateEvent with event name and reflectorList
+                if 'summary' in event:
+                    if event['summary'] == mapping.title:
+                        if event['organizer']['email'] == calendar['id']:
+                            print "\nExamining the event: " , event['summary']
+                            # Make the event public
+                            event['visibility'] = "public"
+                            # Store the event link
+                            if 'htmlLink' in event:
+                                mapping.htmlLink = event['htmlLink']
+                            # Store the event location to the mappings object
+                            if 'location' in event:
+                                mapping.location = event['location']
+                            # Display information for recurring event information to the console and store it to the mappings object
+                            if 'recurrence' in event:
+                                mapping = parseRecurrenceRule(event, mapping)
+                            # Display information for single events to the console and update the mappings object
+                            if 'start' in event:
+                                # Get single events from this calendar. Returns the individual instances of recurring events ordered by start date
+                                nextEvents = getSingleEvents(calendarId, httpAuth)
+                                mapping = parseSingleRule(nextEvents, event, mapping)
+                            try:
+                                response = updateEvent(event, calendarId, mapping.reflectorList, httpAuth, debug)
+                                #print response
+                            except KeyboardInterrupt:
+                                print 'Update canceled. Moving to next event.'
+                            return mapping
+    return mapping
