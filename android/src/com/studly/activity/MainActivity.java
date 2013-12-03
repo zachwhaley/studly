@@ -224,8 +224,7 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
                     float lhsDist = loc.distanceTo(lhsLoc);
 
                     Log.d(TAG, "rhs dist " + rhsDist + " lhs dist " + lhsDist);
-
-                    return (int) (rhsDist - lhsDist);
+                    return (int) (lhsDist - rhsDist);
                 }
             });
             setListAdapter(mStudlyAdapter);
