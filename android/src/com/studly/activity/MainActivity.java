@@ -1,5 +1,7 @@
 package com.studly.activity;
 
+import java.util.Comparator;
+
 import android.accounts.Account;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -53,6 +55,7 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
 
     private SpiceManager mSpiceManager = new SpiceManager(StudlyService.class);
     private String mAccountName;
+    private RequestStudlyGroups mRequestStudlyGroups;
     private StudlyAdapter mStudlyAdapter;
 
     private boolean mConnected = false;
@@ -75,9 +78,7 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
     }
 
     private void performRequest() {
-        final Location loc = getLocation();
-        RequestStudlyGroups request = new RequestStudlyGroups(loc.getLatitude(), loc.getLongitude());
-        mSpiceManager.execute(request, new StudlyMappingRequestListener());
+        mSpiceManager.execute(mRequestStudlyGroups, new StudlyMappingRequestListener());
     }
 
     @Override
@@ -100,6 +101,7 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
          */
         mLocationClient = new LocationClient(this, this, this);
 
+        mRequestStudlyGroups = new RequestStudlyGroups();
         try {
             Log.d(TAG, "Setting list adapter");
             performRequest();
@@ -124,10 +126,6 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
         default:
             return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
     }
 
     @Override
@@ -205,8 +203,27 @@ public class MainActivity extends ListActivity implements ChooseAccountListener,
         }
 
         @Override
-        public void onRequestSuccess(StudlyMapping.List groups) {
-            mStudlyAdapter = new StudlyAdapter(MainActivity.this, groups);
+        public void onRequestSuccess(StudlyMapping.List mappings) {
+            mStudlyAdapter = new StudlyAdapter(MainActivity.this, mappings);
+            mStudlyAdapter.sort(new Comparator<StudlyMapping>() {
+                @Override
+                public int compare(StudlyMapping lhs, StudlyMapping rhs) {
+                    final Location loc = MainActivity.this.getLocation();
+                    
+                    Location lhsLoc = new Location("");
+                    lhsLoc.setLatitude(lhs.getLatitude());
+                    lhsLoc.setLongitude(lhs.getLongitude());
+                    
+                    Location rhsLoc = new Location("");
+                    rhsLoc.setLatitude(rhs.getLatitude());
+                    rhsLoc.setLongitude(rhs.getLongitude());
+                    
+                    float rhsDist = loc.distanceTo(rhsLoc);
+                    float lhsDist = loc.distanceTo(lhsLoc);
+                    
+                    return (int) (rhsDist - lhsDist);
+                }
+            });
             setListAdapter(mStudlyAdapter);
         }
 

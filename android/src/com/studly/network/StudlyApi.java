@@ -8,6 +8,5 @@ import com.studly.model.StudlyMapping;
 public interface StudlyApi {
 
     @GET("/get-mappings.json")
-    StudlyMapping.List getMappings(@Query("lat") double latitude,
-                                   @Query("lon") double longitude);
+    StudlyMapping.List getMappings();
 }

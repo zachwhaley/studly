@@ -12,6 +12,8 @@ public class StudlyMapping {
     private String nextStartTime;
     private String recurringStartTime;
     private String location;
+    private double latitude;
+    private double longitude;
 
     public static class List extends ArrayList<StudlyMapping> {
     }
@@ -43,5 +45,14 @@ public class StudlyMapping {
     public String getLocation() {
         return location;
     }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
 
 }
