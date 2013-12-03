@@ -28,11 +28,8 @@ class Mappings(ndb.Model):
     location = ndb.StringProperty()
 
 class AddEmail(webapp2.RequestHandler):
-    def get(self):          
-        with open('add-email.html', 'r') as f:
-            html = f.read()
-        self.response.out.write(html)
-        
+    def get(self):
+        self.redirect('/myevents')
     @decorator.oauth_required
     def post(self):
         # Get the authorized Http object created by the decorator.
@@ -50,13 +47,11 @@ class AddEmail(webapp2.RequestHandler):
             maps.append(map.to_dict())
             # Call UpdateCalendarList with the updated mapping object
             response = calendarListUpdate.updateCalendarList(maps, self.request.get('calendarId'), http)
-        # Return the response from Google
-        self.response.out.write(json.dumps(response))
-        
-        
+        self.redirect('/myevents')
     
 class GetMappings(webapp2.RequestHandler):
     def get(self):
+        # Sweet one-liner.
         self.response.out.write(json.dumps([m.to_dict() for m in Mappings.query().fetch()]))
     
 class SetMappings(webapp2.RequestHandler):

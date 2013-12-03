@@ -194,7 +194,8 @@ def updateCalendarList(mappings, calendarId, httpAuth, TimezoneOffset = 0, debug
                            # Make the event public
                            event['visibility'] = "public"
                            # Store the event location to the mappings object
-                           entry['location'] = event['location']
+                           if 'location' in event:
+                               entry['location'] = event['location']
                            # Display information for recurring event information to the console and store it to the mappings object
                            if 'recurrence' in event:
                                entry = parseRecurrenceRule(event, entry)                                
